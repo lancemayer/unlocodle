@@ -1,6 +1,7 @@
 import { Component, createSignal, For, Show } from 'solid-js';
 
 const App: Component = () => {
+  const totalGuesses = 6;
   const [guess, setGuess] = createSignal("");
   const [committedGuesses, setCommittedGuesses] = createSignal<string[]>([]);
 
@@ -31,17 +32,33 @@ const App: Component = () => {
       <div>
         <h1>UNLOCODLE</h1>
         <For each={committedGuesses()}>
-          {guess => <p>{guess}</p>}
+          {guess => (
+            <div class="mt-2 max-w-lg grid grid-cols-5">
+              {Array.from(guess).map(letter => (
+                <div class="flex items-center justify-center h-16 w-16 border-2 border-black">{letter}</div>
+              ))}
+            </div>
+          )}
         </For>
 
-        <Show when={committedGuesses().length < 6}>
-          <p>0: {guess()[0]}</p>
-          <p>1: {guess()[1]}</p>
-          <p>2: {guess()[2]}</p>
-          <p>3: {guess()[3]}</p>
-          <p>4: {guess()[4]}</p>
-          <For each={Array(5 - committedGuesses().length).fill(null)}>
-            {() => <p>_</p>}
+        <Show when={committedGuesses().length < totalGuesses}>
+          <div class="mt-2 max-w-lg grid grid-cols-5">
+            <div class="flex items-center justify-center h-16 w-16 border-2 border-black">{guess()[0]}</div>
+            <div class="flex items-center justify-center h-16 w-16 border-2 border-black">{guess()[1]}</div>
+            <div class="flex items-center justify-center h-16 w-16 border-2 border-black">{guess()[2]}</div>
+            <div class="flex items-center justify-center h-16 w-16 border-2 border-black">{guess()[3]}</div>
+            <div class="flex items-center justify-center h-16 w-16 border-2 border-black">{guess()[4]}</div>
+          </div>
+          <For each={Array(5 - committedGuesses().length)}>
+            {row => (
+              <div hidden class="mt-2 max-w-lg grid grid-cols-5">
+                <div class="flex items-center justify-center h-16 w-16 border-2 border-black"></div>
+                <div class="flex items-center justify-center h-16 w-16 border-2 border-black"></div>
+                <div class="flex items-center justify-center h-16 w-16 border-2 border-black"></div>
+                <div class="flex items-center justify-center h-16 w-16 border-2 border-black"></div>
+                <div class="flex items-center justify-center h-16 w-16 border-2 border-black"></div>
+              </div>
+            )}
           </For>
         </Show>
       </div>
