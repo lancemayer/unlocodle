@@ -1,9 +1,13 @@
 import { Component, createSignal, For, Show } from 'solid-js';
 
 const App: Component = () => {
+  const solution = "USCLE";
+
+  const [gameResult, setGameResult] = createSignal<"unfinished" | "win" | "loss">("unfinished");
+
   const totalGuesses = 6;
   const [guess, setGuess] = createSignal("");
-  const [committedGuesses, setCommittedGuesses] = createSignal<string[]>([]);
+  const [committedGuesses, setCommittedGuesses] = createSignal<string[]>(["USLAX"]);
 
   const handleKeyPress = (e: KeyboardEvent) => {
     if (e.key === "Backspace") {
@@ -11,6 +15,9 @@ const App: Component = () => {
     }
     else if (e.key === "Enter") {
       if (guess().length === 5 && committedGuesses().length < 6) {
+        if (guess() === solution) {
+          setGameResult("win");
+        }
         setCommittedGuesses([...committedGuesses(), guess()]);
         setGuess("");
       }
@@ -18,6 +25,7 @@ const App: Component = () => {
     else if (/^[a-zA-Z0-9]$/.test(e.key.toLowerCase())
       && committedGuesses().length < 6
       && !(e.metaKey || e.ctrlKey)
+      && gameResult() === "unfinished"
     ) {
       if (guess().length < 5) {
         setGuess(guess() + e.key.toUpperCase());
@@ -30,7 +38,8 @@ const App: Component = () => {
   return (
     <div>
       <div>
-        <h1>UNLOCODLE</h1>
+        <h1 class="text-center">UNLOCODLE</h1>
+
         <For each={committedGuesses()}>
           {guess => (
             <div class="mt-2 max-w-lg grid grid-cols-5">
@@ -60,6 +69,9 @@ const App: Component = () => {
               </div>
             )}
           </For>
+        </Show>
+        <Show when={gameResult() === 'win'}>
+          <div>{gameResult()}</div>
         </Show>
       </div>
     </div>
