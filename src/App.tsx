@@ -136,7 +136,7 @@ const App: Component = () => {
               <For each={row}>
                 {key => (
                   <button
-                    className="w-8 h-[3rem] m-1 bg-blue-500 text-white"
+                    className="px-4 rounded-lg h-[3rem] m-1 bg-[#d3d6da] text-black font-bold"
                     onClick={() => {
                       if (key === "Enter") {
                         enterGuess();
