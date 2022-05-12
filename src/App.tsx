@@ -98,72 +98,75 @@ const App: Component = () => {
   return (
     <div>
       <div>
-        <h1 class="text-center">UNLOCODLE</h1>
-
-        <For each={committedGuesses()}>
-          {guess => (
-            <div class="mt-2 max-w-lg grid grid-cols-5">
-              {Array.from(guess).map(cell => (
-                <div class={`${cell.color === "match" ? "bg-green-500" : cell.color === "exists" ? "bg-yellow-300" : "bg-gray-400"} flex items-center justify-center h-16 w-16 border-2 border-black`}>{cell.value}</div>
-              ))}
-            </div>
-          )}
-        </For>
-
-        <Show when={committedGuesses().length < totalGuesses}>
-          <div class="mt-2 max-w-lg grid grid-cols-5">
-            <Cell>{guess()[0]}</Cell>
-            <Cell>{guess()[1]}</Cell>
-            <Cell>{guess()[2]}</Cell>
-            <Cell>{guess()[3]}</Cell>
-            <Cell>{guess()[4]}</Cell>
-          </div>
-          <For each={Array(5 - committedGuesses().length)}>
-            {row => (
-              <div hidden class="mt-2 max-w-lg grid grid-cols-5">
-                <Cell></Cell>
-                <Cell></Cell>
-                <Cell></Cell>
-                <Cell></Cell>
-                <Cell></Cell>
+        <h1 class="font-extrabold text-3xl text-center">UNLOCODLE</h1>
+        <div class="w-[350px] mx-auto">
+          <For each={committedGuesses()}>
+            {guess => (
+              <div class="mt-2 max-w-lg grid grid-cols-5">
+                {Array.from(guess).map(cell => (
+                  <div class={`${cell.color === "match" ? "bg-green-500" : cell.color === "exists" ? "bg-yellow-300" : "bg-gray-400"} flex items-center justify-center h-16 w-16 border-2 border-black`}>{cell.value}</div>
+                ))}
               </div>
             )}
           </For>
-          <div>{tooShortMessage}</div>
-        </Show>
-        <For each={keyboard}>
-          {row => (
-            <div>
-              <For each={row}>
-                {key => (
-                  <button
-                    className="px-4 rounded-lg h-[3rem] m-1 bg-[#d3d6da] text-black font-bold"
-                    onClick={() => {
-                      if (key === "Enter") {
-                        enterGuess();
-                      }
-                      else if (key === "Delete") {
-                        deleteLetter();
-                      }
-                      else {
-                        inputLetter(key)
-                      }
-                    }
-                    }
-                  >
-                    {key}
-                  </button>
 
-                )}
-              </For>
+          <Show when={committedGuesses().length < totalGuesses}>
+            <div class="mt-2 max-w-lg grid grid-cols-5">
+              <Cell>{guess()[0]}</Cell>
+              <Cell>{guess()[1]}</Cell>
+              <Cell>{guess()[2]}</Cell>
+              <Cell>{guess()[3]}</Cell>
+              <Cell>{guess()[4]}</Cell>
             </div>
-          )}
-        </For>
+            <For each={Array(5 - committedGuesses().length)}>
+              {row => (
+                <div hidden class="mt-2 max-w-lg grid grid-cols-5">
+                  <Cell></Cell>
+                  <Cell></Cell>
+                  <Cell></Cell>
+                  <Cell></Cell>
+                  <Cell></Cell>
+                </div>
+              )}
+            </For>
+            <div>{tooShortMessage}</div>
+          </Show>
+        </div>
+        <div class="w-max mx-auto">
+          <For each={keyboard}>
+            {row => (
+              <div class="w-max mx-auto">
+                <For each={row}>
+                  {key => (
+                    <button
+                      className="px-4 rounded-lg h-[3rem] m-1 bg-[#d3d6da] text-black font-bold"
+                      onClick={() => {
+                        if (key === "Enter") {
+                          enterGuess();
+                        }
+                        else if (key === "Delete") {
+                          deleteLetter();
+                        }
+                        else {
+                          inputLetter(key)
+                        }
+                      }
+                      }
+                    >
+                      {key}
+                    </button>
+
+                  )}
+                </For>
+              </div>
+            )}
+          </For>
+        </div>
         <Show when={gameResult() === 'win'}>
           <div>{gameResult()}</div>
         </Show>
       </div>
-    </div>
+    </div >
   );
 };
 
