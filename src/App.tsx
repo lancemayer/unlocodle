@@ -1,4 +1,5 @@
 import { Component, createEffect, createSignal, For, onCleanup, Show } from 'solid-js';
+import Cell from './components/Cell';
 
 const App: Component = () => {
   interface CellInfo {
@@ -111,20 +112,20 @@ const App: Component = () => {
 
         <Show when={committedGuesses().length < totalGuesses}>
           <div class="mt-2 max-w-lg grid grid-cols-5">
-            <div class="flex items-center justify-center h-16 w-16 border-2 border-black">{guess()[0]}</div>
-            <div class="flex items-center justify-center h-16 w-16 border-2 border-black">{guess()[1]}</div>
-            <div class="flex items-center justify-center h-16 w-16 border-2 border-black">{guess()[2]}</div>
-            <div class="flex items-center justify-center h-16 w-16 border-2 border-black">{guess()[3]}</div>
-            <div class="flex items-center justify-center h-16 w-16 border-2 border-black">{guess()[4]}</div>
+            <Cell>{guess()[0]}</Cell>
+            <Cell>{guess()[1]}</Cell>
+            <Cell>{guess()[2]}</Cell>
+            <Cell>{guess()[3]}</Cell>
+            <Cell>{guess()[4]}</Cell>
           </div>
           <For each={Array(5 - committedGuesses().length)}>
             {row => (
               <div hidden class="mt-2 max-w-lg grid grid-cols-5">
-                <div class="flex items-center justify-center h-16 w-16 border-2 border-black"></div>
-                <div class="flex items-center justify-center h-16 w-16 border-2 border-black"></div>
-                <div class="flex items-center justify-center h-16 w-16 border-2 border-black"></div>
-                <div class="flex items-center justify-center h-16 w-16 border-2 border-black"></div>
-                <div class="flex items-center justify-center h-16 w-16 border-2 border-black"></div>
+                <Cell></Cell>
+                <Cell></Cell>
+                <Cell></Cell>
+                <Cell></Cell>
+                <Cell></Cell>
               </div>
             )}
           </For>
