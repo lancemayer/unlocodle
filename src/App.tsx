@@ -132,14 +132,14 @@ const App: Component = () => {
             <div>{tooShortMessage}</div>
           </Show>
         </div>
-        <div class="w-max mx-auto">
+        <div class="w-[500] mx-auto space-y-1 mt-4">
           <For each={keyboard}>
             {row => (
-              <div class="w-max mx-auto">
+              <div class="w-max mx-auto space-x-1">
                 <For each={row}>
                   {key => (
                     <button
-                      className="px-4 rounded-lg h-[3rem] m-1 bg-[#d3d6da] text-black font-bold"
+                      className={`${key === "Enter" || key === "Delete" ? "w-[65px]" : "w-[43px]"} rounded-md h-[3.5rem] bg-[#d3d6da] text-black font-bold`}
                       onClick={() => {
                         if (key === "Enter") {
                           enterGuess();
@@ -148,14 +148,13 @@ const App: Component = () => {
                           deleteLetter();
                         }
                         else {
-                          inputLetter(key)
+                          inputLetter(key);
                         }
                       }
                       }
                     >
                       {key}
                     </button>
-
                   )}
                 </For>
               </div>
@@ -165,7 +164,7 @@ const App: Component = () => {
         <Show when={gameResult() === 'win'}>
           <div>{gameResult()}</div>
         </Show>
-      </div>
+      </div >
     </div >
   );
 };
