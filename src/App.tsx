@@ -101,7 +101,7 @@ const App: Component = () => {
             {guess => (
               <div class="mt-2 max-w-lg grid grid-cols-5">
                 {Array.from(guess).map(cell => (
-                  <div class={`${cell.color === "match" ? "bg-green-500" : cell.color === "exists" ? "bg-yellow-300" : "bg-gray-400"} flex items-center justify-center h-16 w-16 border-2 border-black`}>{cell.value}</div>
+                  <Cell color={cell.color}>{cell.value}</Cell>
                 ))}
               </div>
             )}
