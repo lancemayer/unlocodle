@@ -25,7 +25,6 @@ const App: Component = () => {
   const [tooShortMessage, setTooShortMessage] = createSignal("");
 
   const handleKeyPress = (e: KeyboardEvent) => {
-    e.preventDefault();
     if (e.repeat === true) {
       return;
     }
