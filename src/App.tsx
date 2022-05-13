@@ -1,5 +1,6 @@
 import { Component, createEffect, createSignal, For, onCleanup, Show } from 'solid-js';
 import Cell from './components/Cell';
+import Keyboard from './components/Keyboard';
 
 const App: Component = () => {
   interface CellInfo {
@@ -11,12 +12,6 @@ const App: Component = () => {
 
   // TODO: Create function to calculate game status based on last guess and number of guesses
   const [gameResult, setGameResult] = createSignal<"unfinished" | "win" | "loss">("unfinished");
-  const keyboard: string[][] = [
-    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
-    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
-    ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-    ["Enter", "Z", "X", "C", "V", "B", "N", "M", "Delete"],
-  ]
 
   const totalGuesses = 6;
   const [guess, setGuess] = createSignal("");
@@ -134,35 +129,7 @@ const App: Component = () => {
             <div>{tooShortMessage}</div>
           </Show>
         </div>
-        <div class="absolute w-[500] mx-auto space-y-1 mb-2 inset-x-0 bottom-0">
-          <For each={keyboard}>
-            {row => (
-              <div class="w-max mx-auto space-x-1">
-                <For each={row}>
-                  {key => (
-                    <button
-                      className={`${key === "Enter" || key === "Delete" ? "w-[65px]" : "w-[43px]"} rounded-md h-[3.3rem] bg-[#d3d6da] text-black font-bold`}
-                      onClick={() => {
-                        if (key === "Enter") {
-                          enterGuess();
-                        }
-                        else if (key === "Delete") {
-                          deleteLetter();
-                        }
-                        else {
-                          inputLetter(key);
-                        }
-                      }
-                      }
-                    >
-                      {key}
-                    </button>
-                  )}
-                </For>
-              </div>
-            )}
-          </For>
-        </div>
+        <Keyboard enterGuess={enterGuess} deleteLetter={deleteLetter} inputLetter={inputLetter} />
         <Show when={gameResult() === 'win'}>
           <div>{gameResult()}</div>
         </Show>
