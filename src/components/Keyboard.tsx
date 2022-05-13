@@ -25,7 +25,7 @@ const Keyboard = (
             <For each={row}>
               {key => (
                 <button
-                  className={`${key === "Enter" || key === "Delete" ? "w-[65px]" : "w-[43px]"} rounded-md h-[3.3rem] bg-[#d3d6da] text-black font-bold`}
+                  className={`${key === "Enter" || key === "Delete" ? "w-[65px]" : "w-[43px]"} focus:outline-none rounded-md h-[3.3rem] bg-[#d3d6da] text-black font-bold`}
                   onClick={() => {
                     if (key === "Enter") {
                       enterGuess();
