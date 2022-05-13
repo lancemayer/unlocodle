@@ -1,5 +1,6 @@
 import { Component, createEffect, createSignal, For, onCleanup, Show } from 'solid-js';
 import Cell from './components/Cell';
+import Keyboard from './components/Keyboard';
 
 const App: Component = () => {
   interface CellInfo {
@@ -11,12 +12,6 @@ const App: Component = () => {
 
   // TODO: Create function to calculate game status based on last guess and number of guesses
   const [gameResult, setGameResult] = createSignal<"unfinished" | "win" | "loss">("unfinished");
-  const keyboard: string[][] = [
-    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
-    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
-    ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
-    ["Enter", "Z", "X", "C", "V", "B", "N", "M", "Delete"],
-  ]
 
   const totalGuesses = 6;
   const [guess, setGuess] = createSignal("");
@@ -25,7 +20,9 @@ const App: Component = () => {
   const [tooShortMessage, setTooShortMessage] = createSignal("");
 
   const handleKeyPress = (e: KeyboardEvent) => {
-    e.preventDefault();
+    if (e.repeat === true) {
+      return;
+    }
     if (e.key === "Backspace") {
       deleteLetter();
     }
@@ -40,9 +37,9 @@ const App: Component = () => {
   };
 
   createEffect(() => {
-    document.addEventListener("keypress", handleKeyPress);
+    document.addEventListener("keydown", handleKeyPress);
 
-    onCleanup(() => document.removeEventListener("keypress", handleKeyPress));
+    onCleanup(() => document.removeEventListener("keydown", handleKeyPress));
   })
 
   const deleteLetter = () => {
@@ -104,7 +101,7 @@ const App: Component = () => {
             {guess => (
               <div class="mt-2 max-w-lg grid grid-cols-5">
                 {Array.from(guess).map(cell => (
-                  <div class={`${cell.color === "match" ? "bg-green-500" : cell.color === "exists" ? "bg-yellow-300" : "bg-gray-400"} flex items-center justify-center h-16 w-16 border-2 border-black`}>{cell.value}</div>
+                  <Cell color={cell.color}>{cell.value}</Cell>
                 ))}
               </div>
             )}
@@ -132,40 +129,11 @@ const App: Component = () => {
             <div>{tooShortMessage}</div>
           </Show>
         </div>
-        <div class="w-max mx-auto">
-          <For each={keyboard}>
-            {row => (
-              <div class="w-max mx-auto">
-                <For each={row}>
-                  {key => (
-                    <button
-                      className="px-4 rounded-lg h-[3rem] m-1 bg-[#d3d6da] text-black font-bold"
-                      onClick={() => {
-                        if (key === "Enter") {
-                          enterGuess();
-                        }
-                        else if (key === "Delete") {
-                          deleteLetter();
-                        }
-                        else {
-                          inputLetter(key)
-                        }
-                      }
-                      }
-                    >
-                      {key}
-                    </button>
-
-                  )}
-                </For>
-              </div>
-            )}
-          </For>
-        </div>
+        <Keyboard enterGuess={enterGuess} deleteLetter={deleteLetter} inputLetter={inputLetter} />
         <Show when={gameResult() === 'win'}>
           <div>{gameResult()}</div>
         </Show>
-      </div>
+      </div >
     </div >
   );
 };
