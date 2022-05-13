@@ -134,14 +134,14 @@ const App: Component = () => {
             <div>{tooShortMessage}</div>
           </Show>
         </div>
-        <div class="w-[500] mx-auto space-y-1 mt-4">
+        <div class="absolute w-[500] mx-auto space-y-1 mb-2 inset-x-0 bottom-0">
           <For each={keyboard}>
             {row => (
               <div class="w-max mx-auto space-x-1">
                 <For each={row}>
                   {key => (
                     <button
-                      className={`${key === "Enter" || key === "Delete" ? "w-[65px]" : "w-[43px]"} rounded-md h-[3.5rem] bg-[#d3d6da] text-black font-bold`}
+                      className={`${key === "Enter" || key === "Delete" ? "w-[65px]" : "w-[43px]"} rounded-md h-[3.3rem] bg-[#d3d6da] text-black font-bold`}
                       onClick={() => {
                         if (key === "Enter") {
                           enterGuess();
