@@ -26,6 +26,9 @@ const App: Component = () => {
 
   const handleKeyPress = (e: KeyboardEvent) => {
     e.preventDefault();
+    if (e.repeat === true) {
+      return;
+    }
     if (e.key === "Backspace") {
       deleteLetter();
     }
@@ -40,9 +43,9 @@ const App: Component = () => {
   };
 
   createEffect(() => {
-    document.addEventListener("keypress", handleKeyPress);
+    document.addEventListener("keydown", handleKeyPress);
 
-    onCleanup(() => document.removeEventListener("keypress", handleKeyPress));
+    onCleanup(() => document.removeEventListener("keydown", handleKeyPress));
   })
 
   const deleteLetter = () => {
