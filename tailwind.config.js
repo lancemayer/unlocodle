@@ -1,10 +1,20 @@
 const { rule } = require("postcss");
 
 module.exports = {
-  purge: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  darkMode: false, // or 'media' or 'class',
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  darkMode: true,
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        pop: {
+          '0%': { transform: 'scale(110%)' },
+          '100%': { transform: 'scale(100%)' },
+        }
+      },
+      animation: {
+        add: 'pop .1s ease-in-out',
+      }
+    },
   },
   plugins: [],
 }
