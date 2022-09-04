@@ -1,6 +1,13 @@
-import { Component, createEffect, createSignal, For, onCleanup, Show } from 'solid-js';
-import Cell from './components/Cell';
-import Keyboard from './components/Keyboard';
+import {
+  Component,
+  createEffect,
+  createSignal,
+  For,
+  onCleanup,
+  Show,
+} from "solid-js";
+import Cell from "./components/Cell";
+import Keyboard from "./components/Keyboard";
 
 const App: Component = () => {
   interface CellInfo {
@@ -11,11 +18,28 @@ const App: Component = () => {
   const solution = "USCLE";
 
   // TODO: Create function to calculate game status based on last guess and number of guesses
-  const [gameResult, setGameResult] = createSignal<"unfinished" | "win" | "loss">("unfinished");
+  const [gameResult, setGameResult] = createSignal<
+    "unfinished" | "win" | "loss"
+  >("unfinished");
 
   const totalGuesses = 6;
   const [guess, setGuess] = createSignal("");
-  const [committedGuesses, setCommittedGuesses] = createSignal<CellInfo[][]>([]);
+  const [committedGuesses, setCommittedGuesses] = createSignal<CellInfo[][]>([
+    // [
+    //   { value: "U", color: "match" },
+    //   { value: "S", color: "match" },
+    //   { value: "C", color: "match" },
+    //   { value: "L", color: "match" },
+    //   { value: "A", color: "no_match" },
+    // ],
+    // [
+    //   { value: "U", color: "match" },
+    //   { value: "S", color: "match" },
+    //   { value: "L", color: "exists" },
+    //   { value: "A", color: "no_match" },
+    //   { value: "X", color: "no_match" },
+    // ],
+  ]);
 
   const [tooShortMessage, setTooShortMessage] = createSignal("");
 
@@ -25,12 +49,11 @@ const App: Component = () => {
     }
     if (e.key === "Backspace") {
       deleteLetter();
-    }
-    else if (e.key === "Enter") {
+    } else if (e.key === "Enter") {
       enterGuess();
-    }
-    else if (/^[a-zA-Z0-9]$/.test(e.key.toLowerCase())
-      && !(e.metaKey || e.ctrlKey)
+    } else if (
+      /^[a-zA-Z0-9]$/.test(e.key.toLowerCase()) &&
+      !(e.metaKey || e.ctrlKey)
     ) {
       inputLetter(e.key.toUpperCase());
     }
@@ -40,11 +63,11 @@ const App: Component = () => {
     document.addEventListener("keydown", handleKeyPress);
 
     onCleanup(() => document.removeEventListener("keydown", handleKeyPress));
-  })
+  });
 
   const deleteLetter = () => {
     setGuess(guess().slice(0, guess().length - 1));
-  }
+  };
 
   const enterGuess = () => {
     if (guess().length < 5) {
@@ -59,10 +82,10 @@ const App: Component = () => {
 
       let remainingLetters = Array.from(solution);
 
-      let guessColored: CellInfo[] = Array.from(guess()).map(letter => {
+      let guessColored: CellInfo[] = Array.from(guess()).map((letter) => {
         return {
           value: letter,
-          color: "no_match"
+          color: "no_match",
         };
       });
 
@@ -73,7 +96,10 @@ const App: Component = () => {
         }
       }
       for (let i = 0; i < 5; i++) {
-        if (remainingLetters[i] !== "" && remainingLetters.includes(guess()[i])) {
+        if (
+          remainingLetters[i] !== "" &&
+          remainingLetters.includes(guess()[i])
+        ) {
           guessColored[i].color = "exists";
         }
       }
@@ -81,16 +107,17 @@ const App: Component = () => {
       setCommittedGuesses([...committedGuesses(), guessColored]);
       setGuess("");
     }
-  }
+  };
 
   const inputLetter = (letter: string) => {
-    if (guess().length < 5
-      && committedGuesses().length < 6
-      && gameResult() === "unfinished"
+    if (
+      guess().length < 5 &&
+      committedGuesses().length < 6 &&
+      gameResult() === "unfinished"
     ) {
       setGuess(guess() + letter);
     }
-  }
+  };
 
   return (
     <div>
@@ -98,10 +125,12 @@ const App: Component = () => {
         <h1 class="font-extrabold text-3xl text-center">UNLOCODLE</h1>
         <div class="w-[350px] mx-auto">
           <For each={committedGuesses()}>
-            {guess => (
+            {(guess) => (
               <div class="mt-2 max-w-lg grid grid-cols-5">
-                {Array.from(guess).map(cell => (
-                  <Cell color={cell.color}>{cell.value}</Cell>
+                {Array.from(guess).map((cell, index) => (
+                  <Cell color={cell.color} reveal index={index}>
+                    {cell.value}
+                  </Cell>
                 ))}
               </div>
             )}
@@ -116,7 +145,7 @@ const App: Component = () => {
               <Cell>{guess()[4]}</Cell>
             </div>
             <For each={Array(5 - committedGuesses().length)}>
-              {row => (
+              {(row) => (
                 <div hidden class="mt-2 max-w-lg grid grid-cols-5">
                   <Cell></Cell>
                   <Cell></Cell>
@@ -129,12 +158,16 @@ const App: Component = () => {
             <div>{tooShortMessage}</div>
           </Show>
         </div>
-        <Keyboard enterGuess={enterGuess} deleteLetter={deleteLetter} inputLetter={inputLetter} />
-        <Show when={gameResult() === 'win'}>
+        <Keyboard
+          enterGuess={enterGuess}
+          deleteLetter={deleteLetter}
+          inputLetter={inputLetter}
+        />
+        <Show when={gameResult() === "win"}>
           <div>{gameResult()}</div>
         </Show>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 };
 
