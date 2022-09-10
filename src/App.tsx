@@ -24,22 +24,17 @@ const App: Component = () => {
 
   const totalGuesses = 6;
   const [guess, setGuess] = createSignal("");
-  const [committedGuesses, setCommittedGuesses] = createSignal<CellInfo[][]>([
-    // [
-    //   { value: "U", color: "match" },
-    //   { value: "S", color: "match" },
-    //   { value: "C", color: "match" },
-    //   { value: "L", color: "match" },
-    //   { value: "A", color: "no_match" },
-    // ],
-    // [
-    //   { value: "U", color: "match" },
-    //   { value: "S", color: "match" },
-    //   { value: "L", color: "exists" },
-    //   { value: "A", color: "no_match" },
-    //   { value: "X", color: "no_match" },
-    // ],
-  ]);
+
+  const storedData: CellInfo[][] = JSON.parse(
+    localStorage.getItem("guesses") || "[][]"
+  );
+
+  const [committedGuesses, setCommittedGuesses] =
+    createSignal<CellInfo[][]>(storedData);
+
+  createEffect(() => {
+    localStorage.setItem("guesses", JSON.stringify(committedGuesses()));
+  });
 
   const [tooShortMessage, setTooShortMessage] = createSignal("");
 
