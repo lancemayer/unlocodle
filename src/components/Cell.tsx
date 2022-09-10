@@ -10,8 +10,6 @@ const Cell = (props: {
   const color = children(() => props.color);
   const reveal = children(() => props.reveal);
   const index = children(() => props.index);
-  const [cellColor, setCellColor] = createSignal("");
-  const [borderColor, setBorderColor] = createSignal("");
   const [delay, setDelay] = createSignal(0);
 
   const [animationStatus, setAnimationStatus] = createSignal<
@@ -21,24 +19,6 @@ const Cell = (props: {
     setDelay(reveal() && index() ? (index() as number) * 250 : 0);
     setAnimationStatus(
       c() === undefined ? "idle" : color() == null ? "add" : "reveal"
-    );
-    setCellColor(
-      color() != null
-        ? color() === "match"
-          ? "bg-green-500"
-          : color() === "exists"
-          ? "bg-yellow-300"
-          : "bg-gray-400"
-        : ""
-    );
-    setBorderColor(
-      reveal()
-        ? color() === "match"
-          ? "border-green-500"
-          : color() === "exists"
-          ? "border-yellow-300"
-          : "border-gray-400"
-        : ""
     );
   });
   return (

@@ -52,7 +52,7 @@ const App: Component = () => {
     } else if (e.key === "Enter") {
       enterGuess();
     } else if (
-      /^[a-zA-Z0-9]$/.test(e.key.toLowerCase()) &&
+      /^[a-z0-9]$/.test(e.key.toLowerCase()) &&
       !(e.metaKey || e.ctrlKey)
     ) {
       inputLetter(e.key.toUpperCase());
