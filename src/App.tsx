@@ -26,7 +26,7 @@ const App: Component = () => {
   const [guess, setGuess] = createSignal("");
 
   const storedData: CellInfo[][] = JSON.parse(
-    localStorage.getItem("guesses") || "[][]"
+    localStorage.getItem("guesses") || "[]"
   );
 
   const [committedGuesses, setCommittedGuesses] =
@@ -118,6 +118,9 @@ const App: Component = () => {
     <div>
       <div>
         <h1 class="font-extrabold text-3xl text-center">UNLOCODLE</h1>
+        <button onClick={() => localStorage.setItem("guesses", "[]")}>
+          Reset
+        </button>
         <div class="w-[350px] mx-auto">
           <For each={committedGuesses()}>
             {(guess) => (
