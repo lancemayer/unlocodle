@@ -1,5 +1,6 @@
 import {
   Component,
+  createComputed,
   createEffect,
   createSignal,
   For,
@@ -31,6 +32,16 @@ const App: Component = () => {
 
   const [committedGuesses, setCommittedGuesses] =
     createSignal<CellInfo[][]>(storedData);
+
+  createComputed(() => {
+    const mostRecentGuess = committedGuesses()
+      .at(-1)
+      ?.map((c) => c.value)
+      .join("");
+    if (mostRecentGuess === solution) {
+      setGameResult("win");
+    }
+  });
 
   createEffect(() => {
     localStorage.setItem("guesses", JSON.stringify(committedGuesses()));
@@ -71,9 +82,6 @@ const App: Component = () => {
     }
     if (guess().length === 5 && committedGuesses().length < 6) {
       setTooShortMessage("");
-      if (guess() === solution) {
-        setGameResult("win");
-      }
 
       let remainingLetters = Array.from(solution);
 
