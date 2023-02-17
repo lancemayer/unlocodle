@@ -5,7 +5,7 @@ import {
   createSignal,
   For,
   onCleanup,
-  Show,
+  Show
 } from "solid-js";
 import Cell from "./components/Cell";
 import Keyboard from "./components/Keyboard";
@@ -38,8 +38,13 @@ const App: Component = () => {
       .at(-1)
       ?.map((c) => c.value)
       .join("");
+
     if (mostRecentGuess === solution) {
       setGameResult("win");
+    } else if (committedGuesses().length === 6) {
+      setGameResult("loss");
+    } else {
+      setGameResult("unfinished");
     }
   });
 
@@ -126,7 +131,10 @@ const App: Component = () => {
     <div>
       <div>
         <h1 class="font-extrabold text-3xl text-center">UNLOCODLE</h1>
-        <button onClick={() => localStorage.setItem("guesses", "[]")}>
+        <button onClick={() => {
+          localStorage.setItem("guesses", "[]")
+        }
+        }>
           Reset
         </button>
         <div class="w-[350px] mx-auto">
@@ -169,7 +177,7 @@ const App: Component = () => {
           deleteLetter={deleteLetter}
           inputLetter={inputLetter}
         />
-        <Show when={gameResult() === "win"}>
+        <Show when={gameResult() !== "unfinished"}>
           <div>{gameResult()}</div>
         </Show>
       </div>
