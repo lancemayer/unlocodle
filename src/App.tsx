@@ -1,11 +1,11 @@
 import {
-	Component,
-	createComputed,
-	createEffect,
-	createSignal,
-	For,
-	onCleanup,
-	Show,
+  Component,
+  createComputed,
+  createEffect,
+  createSignal,
+  For,
+  onCleanup,
+  Show
 } from "solid-js"
 import Cell from "./components/Cell"
 import Keyboard from "./components/Keyboard"
@@ -131,13 +131,15 @@ const App: Component = () => {
 		<div>
 			<div>
 				<h1 class="font-extrabold text-3xl text-center">UNLOCODLE</h1>
-				<button
-					onClick={() => {
-						localStorage.setItem("guesses", "[]")
-					}}
-				>
-					Reset
-				</button>
+        <Show when={import.meta.env.DEV}>
+          <button
+            onClick={() => {
+              localStorage.setItem("guesses", "[]")
+            }}
+          >
+            Reset
+          </button>
+        </Show>
 				<div class="w-[350px] mx-auto">
 					<For each={committedGuesses()}>
 						{(guess) => (
