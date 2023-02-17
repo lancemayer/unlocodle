@@ -15,13 +15,11 @@ module.exports = {
 					"0%": {
 						transform: "rotateX(0deg)",
 						backgroundColor: "white",
-						borderColor: "gray",
 						color: "black",
 					},
 					"50%": {
 						transform: "rotateX(90deg)",
 						backgroundColor: "white",
-						borderColor: "gray",
 						color: "black",
 					},
 					"51%": {
@@ -77,7 +75,7 @@ module.exports = {
 				},
 			},
 			animation: {
-				add: "pop .1s ease-in-out",
+				add: "pop .2s ease-in-out",
 				"reveal-match": "flip-match .8s ease-in-out forwards",
 				"reveal-exists": "flip-exists .8s ease-in-out forwards",
 				"reveal-none": "flip-none .8s ease-in-out forwards",
