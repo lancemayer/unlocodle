@@ -78,9 +78,9 @@ module.exports = {
 			},
 			animation: {
 				add: "pop .1s ease-in-out",
-				"reveal-match": "flip-match .5s ease-in-out forwards",
-				"reveal-exists": "flip-exists .5s ease-in-out forwards",
-				"reveal-none": "flip-none .5s ease-in-out forwards",
+				"reveal-match": "flip-match .8s ease-in-out forwards",
+				"reveal-exists": "flip-exists .8s ease-in-out forwards",
+				"reveal-none": "flip-none .8s ease-in-out forwards",
 			},
 		},
 	},

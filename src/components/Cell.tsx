@@ -16,7 +16,7 @@ const Cell = (props: {
 		"idle" | "add" | "reveal"
 	>("idle")
 	createEffect(() => {
-		setDelay(reveal() && index() ? (index() as number) * 250 : 0)
+		setDelay(reveal() && index() ? (index() as number) * 100 : 0)
 		setAnimationStatus(
 			c() === undefined ? "idle" : color() == null ? "add" : "reveal"
 		)
