@@ -135,6 +135,7 @@ const App: Component = () => {
           <button
             onClick={() => {
               localStorage.setItem("guesses", "[]")
+              location.reload()
             }}
           >
             Reset
