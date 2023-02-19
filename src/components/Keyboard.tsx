@@ -24,7 +24,7 @@ const Keyboard = ({
 						<For each={row}>
 							{(key) => (
 								<button
-									className={`${
+									class={`${
 										key === "Enter" || key === "Delete"
 											? "w-[65px]"
 											: "w-[43px]"
