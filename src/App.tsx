@@ -1,11 +1,11 @@
 import {
-  Component,
-  createComputed,
-  createEffect,
-  createSignal,
-  For,
-  onCleanup,
-  Show
+	Component,
+	createComputed,
+	createEffect,
+	createSignal,
+	For,
+	onCleanup,
+	Show,
 } from "solid-js"
 import Cell from "./components/Cell"
 import Keyboard from "./components/Keyboard"
@@ -130,21 +130,21 @@ const App: Component = () => {
 	return (
 		<div>
 			<div>
-				<h1 class="font-extrabold text-3xl text-center">UNLOCODLE</h1>
-        <Show when={import.meta.env.DEV}>
-          <button
-            onClick={() => {
-              localStorage.setItem("guesses", "[]")
-              location.reload()
-            }}
-          >
-            Reset
-          </button>
-        </Show>
-				<div class="w-[350px] mx-auto">
+				<h1 class="text-center text-3xl font-extrabold">UNLOCODLE</h1>
+				<Show when={import.meta.env.DEV}>
+					<button
+						onClick={() => {
+							localStorage.setItem("guesses", "[]")
+							location.reload()
+						}}
+					>
+						Reset
+					</button>
+				</Show>
+				<div class="mx-auto w-[350px]">
 					<For each={committedGuesses()}>
 						{(guess) => (
-							<div class="mt-2 max-w-lg grid grid-cols-5">
+							<div class="mt-2 grid max-w-lg grid-cols-5 bg-slate-200">
 								{Array.from(guess).map((cell, index) => (
 									<Cell color={cell.color} reveal index={index}>
 										{cell.value}
@@ -155,7 +155,7 @@ const App: Component = () => {
 					</For>
 
 					<Show when={committedGuesses().length < totalGuesses}>
-						<div class="mt-2 max-w-lg grid grid-cols-5">
+						<div class="mt-2 grid max-w-lg grid-cols-5">
 							<Cell>{guess()[0]}</Cell>
 							<Cell>{guess()[1]}</Cell>
 							<Cell>{guess()[2]}</Cell>
@@ -164,7 +164,7 @@ const App: Component = () => {
 						</div>
 						<For each={Array(5 - committedGuesses().length)}>
 							{(row) => (
-								<div hidden class="mt-2 max-w-lg grid grid-cols-5">
+								<div hidden class="mt-2 grid max-w-lg grid-cols-5">
 									<Cell></Cell>
 									<Cell></Cell>
 									<Cell></Cell>

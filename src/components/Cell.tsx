@@ -23,11 +23,11 @@ const Cell = (props: {
 	})
 	return (
 		<div
-			class={`transition ease-in-out delay-[${delay().toString()}ms] duration-[0ms] animate-reveal-none:bg-red-300 flex items-center justify-center text-3xl
-     font-extrabold rounded-md h-16 w-16 border-2
+			class={`transition ease-in-out delay-[${delay().toString()}ms] animate-reveal-none:bg-red-300 flex h-16 w-16 items-center justify-center
+     rounded-md border-2 text-3xl font-extrabold duration-[0ms]
      ${
 				animationStatus() === "add"
-					? "border-gray-400 animate-add"
+					? "animate-add border-gray-400"
 					: animationStatus() === "reveal"
 					? color() === "match"
 						? "animate-reveal-match"
