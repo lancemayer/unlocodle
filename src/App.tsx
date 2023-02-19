@@ -144,7 +144,7 @@ const App: Component = () => {
 				<div class="mx-auto w-[350px]">
 					<For each={committedGuesses()}>
 						{(guess) => (
-							<div class="mt-2 grid max-w-lg grid-cols-5 bg-slate-200">
+							<div class="mt-2 grid max-w-lg grid-cols-5">
 								{Array.from(guess).map((cell, index) => (
 									<Cell color={cell.color} reveal index={index}>
 										{cell.value}
