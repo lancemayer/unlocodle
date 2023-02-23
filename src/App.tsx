@@ -55,7 +55,7 @@ const App: Component = () => {
 		localStorage.setItem("guesses", JSON.stringify(committedGuesses()))
 	})
 
-	const [tooShortMessage, setTooShortMessage] = createSignal("")
+	const [message, setMessage] = createSignal("")
 
 	const handleKeyPress = (e: KeyboardEvent) => {
 		if (e.repeat === true) {
@@ -93,11 +93,11 @@ const App: Component = () => {
 
 	const enterGuess = () => {
 		if (guess().length < 5) {
-			setTooShortMessage("Guess must be 5 letters long")
+			setMessage("Guess must be 5 letters long")
 			return
 		}
 		if (guess().length === 5 && committedGuesses().length < 6) {
-			setTooShortMessage("")
+			setMessage("")
 
 			let remainingLetters = Array.from(solution)
 
@@ -125,6 +125,8 @@ const App: Component = () => {
 
 			if (guess() === "XXXXX") {
 				setRowShake(true)
+				setMessage("Invalid guess")
+				setTimeout(() => setMessage(""), 3000)
 				return
 			}
 
@@ -189,7 +191,7 @@ const App: Component = () => {
 								</div>
 							)}
 						</For>
-						<div>{tooShortMessage}</div>
+						<div>{message}</div>
 					</Show>
 				</div>
 				<Keyboard
