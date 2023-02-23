@@ -23,8 +23,8 @@ const Cell = (props: {
 	})
 	return (
 		<div
-			class={`transition ease-in-out delay-[${delay().toString()}ms] animate-reveal-none:bg-red-300 flex h-16 w-16 items-center justify-center
-     rounded-md border-2 text-3xl font-extrabold duration-[0ms]
+			class={`transition ease-in-out delay-[${delay().toString()}ms] flex h-16 w-16 items-center justify-center
+     rounded-md border-2 text-black dark:text-white text-3xl font-extrabold duration-[0ms]
      ${
 				animationStatus() === "add"
 					? "animate-add border-gray-400"
@@ -34,7 +34,7 @@ const Cell = (props: {
 						: color() === "exists"
 						? "animate-reveal-exists"
 						: "animate-reveal-none"
-					: "border-[#d3d6da]"
+					: "border-gray-300 dark:border-gray-600"
 			}`}
 			style={{ "animation-delay": delay() + "ms" }}
 		>

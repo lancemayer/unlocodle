@@ -28,7 +28,7 @@ const Keyboard = ({
 										key === "Enter" || key === "Delete"
 											? "w-[65px]"
 											: "w-[43px]"
-									} h-[3.3rem] rounded-md bg-[#d3d6da] font-bold text-black focus:outline-none`}
+									} h-[3.3rem] rounded-md bg-gray-300 dark:bg-gray-500 font-bold text-black dark:text-white focus:outline-none`}
 									onClick={() => {
 										if (key === "Enter") {
 											enterGuess()

@@ -2,7 +2,7 @@ const { rule } = require("postcss")
 
 module.exports = {
 	content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-	darkMode: true,
+	darkMode: 'class',
 	theme: {
 		extend: {
 			keyframes: {
@@ -14,18 +14,15 @@ module.exports = {
 				"flip-match": {
 					"0%": {
 						transform: "rotateX(0deg)",
-						backgroundColor: "white",
-						color: "black",
+						backgroundColor: "transparent",
 					},
 					"50%": {
 						transform: "rotateX(90deg)",
-						backgroundColor: "white",
-						color: "black",
+						backgroundColor: "transparent",
 					},
 					"51%": {
 						transform: "rotateX(90deg)",
 						backgroundColor: "green",
-						borderColor: "green",
 						color: "white",
 					},
 					"100%": {
@@ -38,18 +35,15 @@ module.exports = {
 				"flip-exists": {
 					"0%": {
 						transform: "rotateX(0deg)",
-						backgroundColor: "white",
-						color: "black",
+						backgroundColor: "transparent",
 					},
 					"50%": {
 						transform: "rotateX(90deg)",
-						backgroundColor: "white",
-						color: "black",
+						backgroundColor: "transparent",
 					},
 					"51%": {
 						transform: "rotateX(90deg)",
 						backgroundColor: "#ffe135",
-						borderColor: "#ffe135",
 						color: "white",
 					},
 					"100%": {

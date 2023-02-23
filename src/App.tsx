@@ -12,6 +12,17 @@ import Cell from "./components/Cell"
 import Keyboard from "./components/Keyboard"
 
 const App: Component = () => {
+	const [theme, setTheme] = createSignal("light")
+
+	createEffect(() => {
+		theme()
+		if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark')
+		} else {
+			document.documentElement.classList.remove('dark')
+		}
+})
+
 	interface CellInfo {
 		value: string
 		color: "no_match" | "exists" | "match"
@@ -148,9 +159,18 @@ const App: Component = () => {
 	return (
 		<div>
 			<div>
-				<h1 class="text-center text-3xl font-extrabold">UNLOCODLE</h1>
+				<h1 class="text-black dark:text-white text-center text-3xl font-extrabold">UNLOCODLE</h1>
+				<button class="text-black dark:text-white" onClick={() => {
+					if (localStorage.theme === 'dark') {
+						localStorage.theme = 'light'
+						setTheme('light')
+					} else {
+						localStorage.theme = 'dark'
+						setTheme('dark')
+					}
+					}}>Theme Toggle</button>
 				<Show when={import.meta.env.DEV}>
-					<button
+					<button class="text-black dark:text-white"
 						onClick={() => {
 							localStorage.setItem("guesses", "[]")
 							location.reload()
