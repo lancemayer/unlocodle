@@ -5,6 +5,7 @@ import {
 	createSignal,
 	For,
 	onCleanup,
+	onMount,
 	Show
 } from "solid-js"
 import Cell from "./components/Cell"
@@ -72,6 +73,14 @@ const App: Component = () => {
 		}
 	}
 
+	let divRowRef: any
+
+	onMount(() => divRowRef.addEventListener("animationend", endShake))
+
+	function endShake() {
+		setRowShake(false)
+	}
+
 	createEffect(() => {
 		document.addEventListener("keydown", handleKeyPress)
 
@@ -116,7 +125,6 @@ const App: Component = () => {
 
 			if (guess() === "XXXXX") {
 				setRowShake(true)
-				setTimeout(() => setRowShake(false), 250)
 				return
 			}
 
@@ -163,7 +171,7 @@ const App: Component = () => {
 					</For>
 
 					<Show when={committedGuesses().length < totalGuesses}>
-						<div class={`mt-2 grid max-w-lg grid-cols-5 ${rowShake() === true ? "animate-shake" : ""}`}>
+						<div ref={divRowRef} class={`mt-2 grid max-w-lg grid-cols-5 ${rowShake() === true ? "animate-shake" : ""}`}>
 							<Cell>{guess()[0]}</Cell>
 							<Cell>{guess()[1]}</Cell>
 							<Cell>{guess()[2]}</Cell>
