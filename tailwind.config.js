@@ -73,12 +73,30 @@ module.exports = {
 						color: "white",
 					},
 				},
+				"shake-horizontal": {
+					"20%": {
+						transform: "translateX(-5px)",
+					},
+					"40%": {
+						transform: "translateX(5px)",
+					},
+					"60%": {
+						transform: "translateX(-5px)",
+					},
+					"80%": {
+						transform: "translateX(5px)",
+					},
+					"100%": {
+						transform: "translateX(0)",
+					},
+				},
 			},
 			animation: {
 				add: "pop .2s ease-in-out",
 				"reveal-match": "flip-match .8s ease-in-out forwards",
 				"reveal-exists": "flip-exists .8s ease-in-out forwards",
 				"reveal-none": "flip-none .8s ease-in-out forwards",
+				shake: "shake-horizontal .25s ease-in-out",
 			},
 		},
 	},

@@ -5,7 +5,7 @@ import {
 	createSignal,
 	For,
 	onCleanup,
-	Show,
+	Show
 } from "solid-js"
 import Cell from "./components/Cell"
 import Keyboard from "./components/Keyboard"
@@ -25,6 +25,8 @@ const App: Component = () => {
 
 	const totalGuesses = 6
 	const [guess, setGuess] = createSignal("")
+
+	const [rowShake, setRowShake] = createSignal(false)
 
 	const storedData: CellInfo[][] = JSON.parse(
 		localStorage.getItem("guesses") || "[]"
@@ -112,6 +114,12 @@ const App: Component = () => {
 				}
 			}
 
+			if (guess() === "XXXXX") {
+				setRowShake(true)
+				setTimeout(() => setRowShake(false), 250)
+				return
+			}
+
 			setCommittedGuesses([...committedGuesses(), guessColored])
 			setGuess("")
 		}
@@ -155,7 +163,7 @@ const App: Component = () => {
 					</For>
 
 					<Show when={committedGuesses().length < totalGuesses}>
-						<div class="mt-2 grid max-w-lg grid-cols-5">
+						<div class={`mt-2 grid max-w-lg grid-cols-5 ${rowShake() === true ? "animate-shake" : ""}`}>
 							<Cell>{guess()[0]}</Cell>
 							<Cell>{guess()[1]}</Cell>
 							<Cell>{guess()[2]}</Cell>
