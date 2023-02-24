@@ -6,22 +6,28 @@ import {
 	For,
 	onCleanup,
 	onMount,
-	Show
+	Show,
 } from "solid-js"
 import Cell from "./components/Cell"
 import Keyboard from "./components/Keyboard"
+import { ThemeSwitcher } from "./components/ThemeSwitcher"
+
+export const [theme, setTheme] = createSignal(localStorage.theme)
 
 const App: Component = () => {
-	const [theme, setTheme] = createSignal("light")
-
 	createEffect(() => {
-		theme()
-		if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-			document.documentElement.classList.add('dark')
+		localStorage.theme = theme()
+
+		if (
+			localStorage.theme === "dark" ||
+			(!("theme" in localStorage) &&
+				window.matchMedia("(prefers-color-scheme: dark)").matches)
+		) {
+			document.documentElement.classList.add("dark")
 		} else {
-			document.documentElement.classList.remove('dark')
+			document.documentElement.classList.remove("dark")
 		}
-})
+	})
 
 	interface CellInfo {
 		value: string
@@ -159,18 +165,13 @@ const App: Component = () => {
 	return (
 		<div>
 			<div>
-				<h1 class="text-black dark:text-white text-center text-3xl font-extrabold">UNLOCODLE</h1>
-				<button class="text-black dark:text-white" onClick={() => {
-					if (localStorage.theme === 'dark') {
-						localStorage.theme = 'light'
-						setTheme('light')
-					} else {
-						localStorage.theme = 'dark'
-						setTheme('dark')
-					}
-					}}>Theme Toggle</button>
+				<h1 class="text-center text-3xl font-extrabold text-black dark:text-white">
+					UNLOCODLE
+				</h1>
+				<ThemeSwitcher />
 				<Show when={import.meta.env.DEV}>
-					<button class="text-black dark:text-white"
+					<button
+						class="text-black dark:text-white"
 						onClick={() => {
 							localStorage.setItem("guesses", "[]")
 							location.reload()
@@ -193,7 +194,12 @@ const App: Component = () => {
 					</For>
 
 					<Show when={committedGuesses().length < totalGuesses}>
-						<div ref={divRowRef} class={`mt-2 grid max-w-lg grid-cols-5 ${rowShake() === true ? "animate-shake" : ""}`}>
+						<div
+							ref={divRowRef}
+							class={`mt-2 grid max-w-lg grid-cols-5 ${
+								rowShake() === true ? "animate-shake" : ""
+							}`}
+						>
 							<Cell>{guess()[0]}</Cell>
 							<Cell>{guess()[1]}</Cell>
 							<Cell>{guess()[2]}</Cell>
