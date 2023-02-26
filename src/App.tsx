@@ -165,21 +165,25 @@ const App: Component = () => {
 	return (
 		<div>
 			<div>
-				<h1 class="text-center text-3xl font-extrabold text-black dark:text-white">
-					UNLOCODLE
-				</h1>
-				<ThemeSwitcher />
-				<Show when={import.meta.env.DEV}>
-					<button
-						class="text-black dark:text-white"
-						onClick={() => {
-							localStorage.setItem("guesses", "[]")
-							location.reload()
-						}}
-					>
-						Reset
-					</button>
-				</Show>
+				<div class="flex h-16 items-center border-b-2 border-gray-300 dark:border-gray-600">
+					<h1 class="text grow text-center font-serif text-3xl font-extrabold tracking-wide text-black dark:text-white">
+						UNLOCODLE
+					</h1>
+					<div class="absolute right-4 justify-end">
+						<ThemeSwitcher />
+						<Show when={import.meta.env.DEV && true}>
+							<button
+								class="text-black dark:text-white"
+								onClick={() => {
+									localStorage.setItem("guesses", "[]")
+									location.reload()
+								}}
+							>
+								Reset
+							</button>
+						</Show>
+					</div>
+				</div>
 				<div class="mx-auto w-[350px]">
 					<For each={committedGuesses()}>
 						{(guess) => (
