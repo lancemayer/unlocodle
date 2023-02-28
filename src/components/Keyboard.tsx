@@ -17,18 +17,16 @@ const Keyboard = ({
 	]
 
 	return (
-		<div class="absolute inset-x-0 bottom-0 mx-auto mb-2 w-[500] space-y-1">
+		<div class="mx-2">
 			<For each={keyboard}>
 				{(row) => (
-					<div class="mx-auto w-max space-x-1">
+					<div class="mb-1.5 flex justify-center space-x-1.5">
 						<For each={row}>
 							{(key) => (
 								<button
 									class={`${
-										key === "Enter" || key === "Delete"
-											? "w-[65px]"
-											: "w-[43px]"
-									} h-[3.3rem] rounded-md bg-gray-300 dark:bg-gray-500 font-bold text-black dark:text-white focus:outline-none`}
+										key === "Enter" || key === "Delete" ? "w-16" : "w-9"
+									} h-[3.3rem] rounded-md bg-gray-300 font-bold text-black focus:outline-none dark:bg-gray-500 dark:text-white`}
 									onClick={() => {
 										if (key === "Enter") {
 											enterGuess()

@@ -23,8 +23,8 @@ const Cell = (props: {
 	})
 	return (
 		<div
-			class={`transition ease-in-out delay-[${delay().toString()}ms] flex h-16 w-16 items-center justify-center
-     rounded-md border-2 text-black dark:text-white text-3xl font-extrabold duration-[0ms]
+			class={`transition ease-in-out delay-[${delay().toString()}ms] flex h-14 w-14 items-center justify-center rounded-md border-2
+     text-3xl font-extrabold text-black duration-[0ms] dark:text-white sm:h-16 sm:w-16
      ${
 				animationStatus() === "add"
 					? "animate-add border-gray-400"

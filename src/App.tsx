@@ -184,54 +184,58 @@ const App: Component = () => {
 						</Show>
 					</div>
 				</div>
-				<div class="mx-auto w-[350px]">
-					<For each={committedGuesses()}>
-						{(guess) => (
-							<div class="mt-2 grid max-w-lg grid-cols-5">
-								{Array.from(guess).map((cell, index) => (
-									<Cell color={cell.color} reveal index={index}>
-										{cell.value}
-									</Cell>
-								))}
-							</div>
-						)}
-					</For>
+				<div class="mx-auto w-full max-w-[500px]">
+					<div class="flex grow justify-center overflow-hidden align-middle">
+						<div class="grid grid-rows-6 gap-y-1.5 p-2.5">
+							<For each={committedGuesses()}>
+								{(guess) => (
+									<div class="grid max-w-lg grid-cols-5 gap-x-1.5">
+										{Array.from(guess).map((cell, index) => (
+											<Cell color={cell.color} reveal index={index}>
+												{cell.value}
+											</Cell>
+										))}
+									</div>
+								)}
+							</For>
 
-					<Show when={committedGuesses().length < totalGuesses}>
-						<div
-							ref={divRowRef}
-							class={`mt-2 grid max-w-lg grid-cols-5 ${
-								rowShake() === true ? "animate-shake" : ""
-							}`}
-						>
-							<Cell>{guess()[0]}</Cell>
-							<Cell>{guess()[1]}</Cell>
-							<Cell>{guess()[2]}</Cell>
-							<Cell>{guess()[3]}</Cell>
-							<Cell>{guess()[4]}</Cell>
-						</div>
-						<For each={Array(5 - committedGuesses().length)}>
-							{(row) => (
-								<div hidden class="mt-2 grid max-w-lg grid-cols-5">
-									<Cell></Cell>
-									<Cell></Cell>
-									<Cell></Cell>
-									<Cell></Cell>
-									<Cell></Cell>
+							<Show when={committedGuesses().length < totalGuesses}>
+								<div
+									ref={divRowRef}
+									class={`grid max-w-lg grid-cols-5 gap-x-1.5 ${
+										rowShake() === true ? "animate-shake" : ""
+									}`}
+								>
+									<Cell>{guess()[0]}</Cell>
+									<Cell>{guess()[1]}</Cell>
+									<Cell>{guess()[2]}</Cell>
+									<Cell>{guess()[3]}</Cell>
+									<Cell>{guess()[4]}</Cell>
 								</div>
-							)}
-						</For>
-						<div>{message}</div>
+								<For each={Array(5 - committedGuesses().length)}>
+									{(row) => (
+										<div hidden class="grid max-w-lg grid-cols-5 gap-x-1.5">
+											<Cell></Cell>
+											<Cell></Cell>
+											<Cell></Cell>
+											<Cell></Cell>
+											<Cell></Cell>
+										</div>
+									)}
+								</For>
+								<div class="text-black dark:text-white">{message()}</div>
+							</Show>
+						</div>
+					</div>
+					<Show when={gameResult() !== "unfinished"}>
+						<div>{gameResult()}</div>
 					</Show>
+					<Keyboard
+						enterGuess={enterGuess}
+						deleteLetter={deleteLetter}
+						inputLetter={inputLetter}
+					/>
 				</div>
-				<Keyboard
-					enterGuess={enterGuess}
-					deleteLetter={deleteLetter}
-					inputLetter={inputLetter}
-				/>
-				<Show when={gameResult() !== "unfinished"}>
-					<div>{gameResult()}</div>
-				</Show>
 			</div>
 		</div>
 	)
