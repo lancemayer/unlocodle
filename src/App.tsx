@@ -169,19 +169,21 @@ const App: Component = () => {
 					<h1 class="text grow text-center font-serif text-3xl font-extrabold tracking-wide text-black dark:text-white">
 						UNLOCODLE
 					</h1>
-					<div class="absolute right-4 justify-end">
-						<ThemeSwitcher />
-						<Show when={import.meta.env.DEV && true}>
-							<button
-								class="text-black dark:text-white"
-								onClick={() => {
-									localStorage.setItem("guesses", "[]")
-									location.reload()
-								}}
-							>
-								Reset
-							</button>
-						</Show>
+					<div class="absolute right-4">
+						<div class="flex space-x-2 align-middle">
+							<ThemeSwitcher />
+							<Show when={import.meta.env.DEV && true}>
+								<button
+									class="text-black dark:text-white"
+									onClick={() => {
+										localStorage.setItem("guesses", "[]")
+										location.reload()
+									}}
+								>
+									Reset
+								</button>
+							</Show>
+						</div>
 					</div>
 				</div>
 				<div class="mx-auto w-full max-w-[500px]">
