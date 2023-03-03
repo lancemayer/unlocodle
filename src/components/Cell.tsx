@@ -1,16 +1,43 @@
-import { children, createEffect, createSignal, JSX } from "solid-js";
+import { children, createEffect, createSignal, JSX } from "solid-js"
 
-const Cell = (props: { color?: string, children?: JSX.Element }) => {
-  const c = children(() => props.children);
-  const color = children(() => props.color);
-  const [animationStatus, setAnimationStatus] = createSignal<"idle" | "add" | "reveal">("idle");
-  createEffect(() => {
-    console.log("color", color());
-    setAnimationStatus(c() === undefined ? "idle" : color() == null ? "add" : "reveal");
-  })
-  return (
-    <div class={`${color() != null ? (color() === "match" ? "bg-green-500" : color() === "exists" ? "bg-yellow-300" : "bg-gray-400") : ""} flex items-center justify-center text-3xl font-extrabold rounded-md h-16 w-16 border-2  ${animationStatus() === "add" ? "border-gray-400 animate-add" : "border-[#d3d6da]"}`}>{c()}</div >
-  );
+const Cell = (props: {
+	color?: string
+	reveal?: boolean
+	index?: number
+	children?: JSX.Element
+}) => {
+	const c = children(() => props.children)
+	const [delay, setDelay] = createSignal(0)
+
+	const [animationStatus, setAnimationStatus] = createSignal<
+		"idle" | "add" | "reveal"
+	>("idle")
+	createEffect(() => {
+		setDelay(props.reveal && props.index ? (props.index as number) * 175 : 0)
+		setAnimationStatus(
+			c() === undefined ? "idle" : props.color == null ? "add" : "reveal"
+		)
+	})
+	return (
+		<div
+			class={`transition ease-in-out delay-[${delay().toString()}ms] flex h-14 w-14 items-center justify-center rounded-md border-2
+     text-3xl font-extrabold text-black duration-[0ms] dark:text-white sm:h-16 sm:w-16
+     ${
+				animationStatus() === "add"
+					? "animate-add border-gray-400"
+					: animationStatus() === "reveal"
+					? props.color === "match"
+						? "animate-reveal-match"
+						: props.color === "exists"
+						? "animate-reveal-exists"
+						: "animate-reveal-none"
+					: "border-gray-300 dark:border-gray-600"
+			}`}
+			style={{ "animation-delay": delay() + "ms" }}
+		>
+			{c()}
+		</div>
+	)
 }
 
-export default Cell;
+export default Cell

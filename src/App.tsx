@@ -1,141 +1,246 @@
-import { Component, createEffect, createSignal, For, onCleanup, Show } from 'solid-js';
-import Cell from './components/Cell';
-import Keyboard from './components/Keyboard';
+import {
+	Component,
+	createComputed,
+	createEffect,
+	createSignal,
+	For,
+	onCleanup,
+	onMount,
+	Show,
+} from "solid-js"
+import Cell from "./components/Cell"
+import Keyboard from "./components/Keyboard"
+import { ThemeSwitcher } from "./components/ThemeSwitcher"
+
+export const [theme, setTheme] = createSignal(localStorage.theme)
 
 const App: Component = () => {
-  interface CellInfo {
-    value: string;
-    color: "no_match" | "exists" | "match";
-  }
+	createEffect(() => {
+		localStorage.theme = theme()
 
-  const solution = "USCLE";
+		if (
+			localStorage.theme === "dark" ||
+			(!("theme" in localStorage) &&
+				window.matchMedia("(prefers-color-scheme: dark)").matches)
+		) {
+			document.documentElement.classList.add("dark")
+		} else {
+			document.documentElement.classList.remove("dark")
+		}
+	})
 
-  // TODO: Create function to calculate game status based on last guess and number of guesses
-  const [gameResult, setGameResult] = createSignal<"unfinished" | "win" | "loss">("unfinished");
+	interface CellInfo {
+		value: string
+		color: "no_match" | "exists" | "match"
+	}
 
-  const totalGuesses = 6;
-  const [guess, setGuess] = createSignal("");
-  const [committedGuesses, setCommittedGuesses] = createSignal<CellInfo[][]>([]);
+	const solution = "USCLE"
 
-  const [tooShortMessage, setTooShortMessage] = createSignal("");
+	// TODO: Create function to calculate game status based on last guess and number of guesses
+	const [gameResult, setGameResult] = createSignal<
+		"unfinished" | "win" | "loss"
+	>("unfinished")
 
-  const handleKeyPress = (e: KeyboardEvent) => {
-    if (e.repeat === true) {
-      return;
-    }
-    if (e.key === "Backspace") {
-      deleteLetter();
-    }
-    else if (e.key === "Enter") {
-      enterGuess();
-    }
-    else if (/^[a-zA-Z0-9]$/.test(e.key.toLowerCase())
-      && !(e.metaKey || e.ctrlKey)
-    ) {
-      inputLetter(e.key.toUpperCase());
-    }
-  };
+	const totalGuesses = 6
+	const [guess, setGuess] = createSignal("")
 
-  createEffect(() => {
-    document.addEventListener("keydown", handleKeyPress);
+	const [rowShake, setRowShake] = createSignal(false)
 
-    onCleanup(() => document.removeEventListener("keydown", handleKeyPress));
-  })
+	const storedData: CellInfo[][] = JSON.parse(
+		localStorage.getItem("guesses") || "[]"
+	)
 
-  const deleteLetter = () => {
-    setGuess(guess().slice(0, guess().length - 1));
-  }
+	const [committedGuesses, setCommittedGuesses] =
+		createSignal<CellInfo[][]>(storedData)
 
-  const enterGuess = () => {
-    if (guess().length < 5) {
-      setTooShortMessage("Guess must be 5 letters long");
-      return;
-    }
-    if (guess().length === 5 && committedGuesses().length < 6) {
-      setTooShortMessage("");
-      if (guess() === solution) {
-        setGameResult("win");
-      }
+	createComputed(() => {
+		const mostRecentGuess = committedGuesses()
+			.at(-1)
+			?.map((c) => c.value)
+			.join("")
 
-      let remainingLetters = Array.from(solution);
+		if (mostRecentGuess === solution) {
+			setGameResult("win")
+		} else if (committedGuesses().length === 6) {
+			setGameResult("loss")
+		} else {
+			setGameResult("unfinished")
+		}
+	})
 
-      let guessColored: CellInfo[] = Array.from(guess()).map(letter => {
-        return {
-          value: letter,
-          color: "no_match"
-        };
-      });
+	createEffect(() => {
+		localStorage.setItem("guesses", JSON.stringify(committedGuesses()))
+	})
 
-      for (let i = 0; i < 5; i++) {
-        if (guess()[i] === solution[i]) {
-          guessColored[i].color = "match";
-          remainingLetters[i] = "";
-        }
-      }
-      for (let i = 0; i < 5; i++) {
-        if (remainingLetters[i] !== "" && remainingLetters.includes(guess()[i])) {
-          guessColored[i].color = "exists";
-        }
-      }
+	const [message, setMessage] = createSignal("")
 
-      setCommittedGuesses([...committedGuesses(), guessColored]);
-      setGuess("");
-    }
-  }
+	const handleKeyPress = (e: KeyboardEvent) => {
+		if (e.repeat === true) {
+			return
+		}
+		if (e.key === "Backspace") {
+			deleteLetter()
+		} else if (e.key === "Enter") {
+			enterGuess()
+		} else if (
+			/^[a-z0-9]$/.test(e.key.toLowerCase()) &&
+			!(e.metaKey || e.ctrlKey)
+		) {
+			inputLetter(e.key.toUpperCase())
+		}
+	}
 
-  const inputLetter = (letter: string) => {
-    if (guess().length < 5
-      && committedGuesses().length < 6
-      && gameResult() === "unfinished"
-    ) {
-      setGuess(guess() + letter);
-    }
-  }
+	let divRowRef: any
 
-  return (
-    <div>
-      <div>
-        <h1 class="font-extrabold text-3xl text-center">UNLOCODLE</h1>
-        <div class="w-[350px] mx-auto">
-          <For each={committedGuesses()}>
-            {guess => (
-              <div class="mt-2 max-w-lg grid grid-cols-5">
-                {Array.from(guess).map(cell => (
-                  <Cell color={cell.color}>{cell.value}</Cell>
-                ))}
-              </div>
-            )}
-          </For>
+	onMount(() => divRowRef.addEventListener("animationend", endShake))
 
-          <Show when={committedGuesses().length < totalGuesses}>
-            <div class="mt-2 max-w-lg grid grid-cols-5">
-              <Cell>{guess()[0]}</Cell>
-              <Cell>{guess()[1]}</Cell>
-              <Cell>{guess()[2]}</Cell>
-              <Cell>{guess()[3]}</Cell>
-              <Cell>{guess()[4]}</Cell>
-            </div>
-            <For each={Array(5 - committedGuesses().length)}>
-              {row => (
-                <div hidden class="mt-2 max-w-lg grid grid-cols-5">
-                  <Cell></Cell>
-                  <Cell></Cell>
-                  <Cell></Cell>
-                  <Cell></Cell>
-                  <Cell></Cell>
-                </div>
-              )}
-            </For>
-            <div>{tooShortMessage}</div>
-          </Show>
-        </div>
-        <Keyboard enterGuess={enterGuess} deleteLetter={deleteLetter} inputLetter={inputLetter} />
-        <Show when={gameResult() === 'win'}>
-          <div>{gameResult()}</div>
-        </Show>
-      </div >
-    </div >
-  );
-};
+	function endShake() {
+		setRowShake(false)
+	}
 
-export default App;
+	createEffect(() => {
+		document.addEventListener("keydown", handleKeyPress)
+
+		onCleanup(() => document.removeEventListener("keydown", handleKeyPress))
+	})
+
+	const deleteLetter = () => {
+		setGuess(guess().slice(0, guess().length - 1))
+	}
+
+	const enterGuess = () => {
+		if (guess().length < 5) {
+			setMessage("Guess must be 5 letters long")
+			return
+		}
+		if (guess().length === 5 && committedGuesses().length < 6) {
+			setMessage("")
+
+			let remainingLetters = Array.from(solution)
+
+			let guessColored: CellInfo[] = Array.from(guess()).map((letter) => {
+				return {
+					value: letter,
+					color: "no_match",
+				}
+			})
+
+			for (let i = 0; i < 5; i++) {
+				if (guess()[i] === solution[i]) {
+					guessColored[i].color = "match"
+					remainingLetters[i] = ""
+				}
+			}
+			for (let i = 0; i < 5; i++) {
+				if (
+					remainingLetters[i] !== "" &&
+					remainingLetters.includes(guess()[i])
+				) {
+					guessColored[i].color = "exists"
+				}
+			}
+
+			if (guess() === "XXXXX") {
+				setRowShake(true)
+				setMessage("Invalid guess")
+				setTimeout(() => setMessage(""), 3000)
+				return
+			}
+
+			setCommittedGuesses([...committedGuesses(), guessColored])
+			setGuess("")
+		}
+	}
+
+	const inputLetter = (letter: string) => {
+		if (
+			guess().length < 5 &&
+			committedGuesses().length < 6 &&
+			gameResult() === "unfinished"
+		) {
+			setGuess(guess() + letter)
+		}
+	}
+
+	return (
+		<div>
+			<div>
+				<div class="flex h-16 items-center border-b-2 border-gray-300 dark:border-gray-600">
+					<h1 class="text grow text-center font-serif text-3xl font-extrabold tracking-wide text-black dark:text-white">
+						UNLOCODLE
+					</h1>
+					<div class="absolute right-4">
+						<div class="flex space-x-2 align-middle">
+							<ThemeSwitcher />
+							<Show when={import.meta.env.DEV && true}>
+								<button
+									class="text-black dark:text-white"
+									onClick={() => {
+										localStorage.setItem("guesses", "[]")
+										location.reload()
+									}}
+								>
+									Reset
+								</button>
+							</Show>
+						</div>
+					</div>
+				</div>
+				<div class="mx-auto w-full max-w-[500px]">
+					<div class="flex grow justify-center overflow-hidden align-middle">
+						<div class="grid grid-rows-6 gap-y-1.5 p-2.5">
+							<For each={committedGuesses()}>
+								{(guess) => (
+									<div class="grid max-w-lg grid-cols-5 gap-x-1.5">
+										{Array.from(guess).map((cell, index) => (
+											<Cell color={cell.color} reveal index={index}>
+												{cell.value}
+											</Cell>
+										))}
+									</div>
+								)}
+							</For>
+
+							<Show when={committedGuesses().length < totalGuesses}>
+								<div
+									ref={divRowRef}
+									class={`grid max-w-lg grid-cols-5 gap-x-1.5 ${
+										rowShake() === true ? "animate-shake" : ""
+									}`}
+								>
+									<Cell>{guess()[0]}</Cell>
+									<Cell>{guess()[1]}</Cell>
+									<Cell>{guess()[2]}</Cell>
+									<Cell>{guess()[3]}</Cell>
+									<Cell>{guess()[4]}</Cell>
+								</div>
+								<For each={Array(5 - committedGuesses().length)}>
+									{(row) => (
+										<div hidden class="grid max-w-lg grid-cols-5 gap-x-1.5">
+											<Cell></Cell>
+											<Cell></Cell>
+											<Cell></Cell>
+											<Cell></Cell>
+											<Cell></Cell>
+										</div>
+									)}
+								</For>
+								<div class="text-black dark:text-white">{message()}</div>
+							</Show>
+						</div>
+					</div>
+					<Show when={gameResult() !== "unfinished"}>
+						<div>{gameResult()}</div>
+					</Show>
+					<Keyboard
+						enterGuess={enterGuess}
+						deleteLetter={deleteLetter}
+						inputLetter={inputLetter}
+					/>
+				</div>
+			</div>
+		</div>
+	)
+}
+
+export default App
