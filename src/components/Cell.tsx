@@ -7,18 +7,15 @@ const Cell = (props: {
 	children?: JSX.Element
 }) => {
 	const c = children(() => props.children)
-	const color = children(() => props.color)
-	const reveal = children(() => props.reveal)
-	const index = children(() => props.index)
 	const [delay, setDelay] = createSignal(0)
 
 	const [animationStatus, setAnimationStatus] = createSignal<
 		"idle" | "add" | "reveal"
 	>("idle")
 	createEffect(() => {
-		setDelay(reveal() && index() ? (index() as number) * 100 : 0)
+		setDelay(props.reveal && props.index ? (props.index as number) * 175 : 0)
 		setAnimationStatus(
-			c() === undefined ? "idle" : color() == null ? "add" : "reveal"
+			c() === undefined ? "idle" : props.color == null ? "add" : "reveal"
 		)
 	})
 	return (
@@ -29,9 +26,9 @@ const Cell = (props: {
 				animationStatus() === "add"
 					? "animate-add border-gray-400"
 					: animationStatus() === "reveal"
-					? color() === "match"
+					? props.color === "match"
 						? "animate-reveal-match"
-						: color() === "exists"
+						: props.color === "exists"
 						? "animate-reveal-exists"
 						: "animate-reveal-none"
 					: "border-gray-300 dark:border-gray-600"
