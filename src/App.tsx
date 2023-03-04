@@ -163,30 +163,30 @@ const App: Component = () => {
 	}
 
 	return (
-		<div>
-			<div>
-				<div class="flex h-16 items-center border-b-2 border-gray-300 dark:border-gray-600">
-					<h1 class="text grow text-center font-serif text-3xl font-extrabold tracking-wide text-black dark:text-white">
-						UNLOCODLE
-					</h1>
-					<div class="absolute right-4">
-						<div class="flex space-x-2 align-middle">
-							<ThemeSwitcher />
-							<Show when={import.meta.env.DEV && true}>
-								<button
-									class="text-black dark:text-white"
-									onClick={() => {
-										localStorage.setItem("guesses", "[]")
-										location.reload()
-									}}
-								>
-									Reset
-								</button>
-							</Show>
-						</div>
+		<>
+			<div class="flex h-16 items-center border-b-2 border-gray-300 dark:border-gray-600">
+				<h1 class="text grow text-center font-serif text-3xl font-extrabold tracking-wide text-black dark:text-white">
+					UNLOCODLE
+				</h1>
+				<div class="absolute right-4">
+					<div class="flex space-x-2 align-middle">
+						<ThemeSwitcher />
+						<Show when={import.meta.env.DEV && true}>
+							<button
+								class="text-black dark:text-white"
+								onClick={() => {
+									localStorage.setItem("guesses", "[]")
+									location.reload()
+								}}
+							>
+								Reset
+							</button>
+						</Show>
 					</div>
 				</div>
-				<div class="mx-auto w-full max-w-[500px]">
+			</div>
+			<div class="mx-auto flex w-full max-w-[500px] flex-col">
+				<div class="flex flex-col">
 					<div class="flex grow justify-center overflow-hidden align-middle">
 						<div class="grid grid-rows-6 gap-y-1.5 p-2.5">
 							<For each={committedGuesses()}>
@@ -232,6 +232,8 @@ const App: Component = () => {
 					<Show when={gameResult() !== "unfinished"}>
 						<div>{gameResult()}</div>
 					</Show>
+				</div>
+				<div class="max-sm:absolute max-sm:inset-x-0 max-sm:bottom-2">
 					<Keyboard
 						enterGuess={enterGuess}
 						deleteLetter={deleteLetter}
@@ -239,7 +241,7 @@ const App: Component = () => {
 					/>
 				</div>
 			</div>
-		</div>
+		</>
 	)
 }
 
