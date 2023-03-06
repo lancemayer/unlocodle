@@ -7,6 +7,7 @@ specifiers:
   prettier: ^2.8.4
   prettier-plugin-tailwindcss: ^0.2.3
   solid-js: ^1.6.11
+  solid-toast: ^0.4.0
   tailwindcss: ^3.2.7
   tailwindcss-animation-delay: ^1.0.7
   typescript: ^4.9.5
@@ -15,6 +16,7 @@ specifiers:
 
 dependencies:
   solid-js: 1.6.11
+  solid-toast: 0.4.0_solid-js@1.6.11
   tailwindcss-animation-delay: 1.0.7_tailwindcss@3.2.7
 
 devDependencies:
@@ -1217,6 +1219,14 @@ packages:
       '@babel/types': 7.20.7
       solid-js: 1.6.11
     dev: true
+
+  /solid-toast/0.4.0_solid-js@1.6.11:
+    resolution: {integrity: sha512-ciJbj+n+7KbUN6wfwZsW7lqFESLoQ9sXMG4uJWuHrIw2f0GxX3/wLSKs0Q1YwdTZZRxyRJ1Nwc2eBVcJvs91+g==}
+    peerDependencies:
+      solid-js: ^1.5.4
+    dependencies:
+      solid-js: 1.6.11
+    dev: false
 
   /source-map-js/1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}

@@ -8,6 +8,7 @@ import {
 	onMount,
 	Show,
 } from "solid-js"
+import toast, { Toaster } from "solid-toast"
 import Cell from "./components/Cell"
 import Keyboard from "./components/Keyboard"
 import { ThemeSwitcher } from "./components/ThemeSwitcher"
@@ -61,18 +62,16 @@ const App: Component = () => {
 
 		if (mostRecentGuess === solution) {
 			setGameResult("win")
+			toast("You win!", { position: "top-center" })
 		} else if (committedGuesses().length === 6) {
 			setGameResult("loss")
-		} else {
-			setGameResult("unfinished")
+			toast("You lose!", { position: "top-center" })
 		}
 	})
 
 	createEffect(() => {
 		localStorage.setItem("guesses", JSON.stringify(committedGuesses()))
 	})
-
-	const [message, setMessage] = createSignal("")
 
 	const handleKeyPress = (e: KeyboardEvent) => {
 		if (e.repeat === true) {
@@ -109,13 +108,16 @@ const App: Component = () => {
 	}
 
 	const enterGuess = () => {
-		if (guess().length < 5) {
-			setMessage("Guess must be 5 letters long")
+		if (gameResult() !== "unfinished") {
 			return
 		}
-		if (guess().length === 5 && committedGuesses().length < 6) {
-			setMessage("")
 
+		if (guess().length < 5) {
+			toast("Guess must be 5 letters long", { position: "top-center" })
+			return
+		}
+
+		if (guess().length === 5 && committedGuesses().length < 6) {
 			let remainingLetters = Array.from(solution)
 
 			let guessColored: CellInfo[] = Array.from(guess()).map((letter) => {
@@ -142,8 +144,7 @@ const App: Component = () => {
 
 			if (guess() === "XXXXX") {
 				setRowShake(true)
-				setMessage("Invalid guess")
-				setTimeout(() => setMessage(""), 3000)
+				toast("Invalid guess", { position: "top-center" })
 				return
 			}
 
@@ -225,13 +226,9 @@ const App: Component = () => {
 										</div>
 									)}
 								</For>
-								<div class="text-black dark:text-white">{message()}</div>
 							</Show>
 						</div>
 					</div>
-					<Show when={gameResult() !== "unfinished"}>
-						<div>{gameResult()}</div>
-					</Show>
 				</div>
 				<div class="max-sm:absolute max-sm:inset-x-0 max-sm:bottom-2">
 					<Keyboard
@@ -241,6 +238,7 @@ const App: Component = () => {
 					/>
 				</div>
 			</div>
+			<Toaster containerClassName="mt-16" />
 		</>
 	)
 }
