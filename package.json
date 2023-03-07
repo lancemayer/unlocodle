@@ -23,8 +23,10 @@
 		"vite-plugin-solid": "^2.5.0"
 	},
 	"dependencies": {
+		"@total-typescript/ts-reset": "^0.3.7",
 		"solid-js": "^1.6.11",
 		"solid-toast": "^0.4.0",
-		"tailwindcss-animation-delay": "^1.0.7"
+		"tailwindcss-animation-delay": "^1.0.7",
+		"zod": "^3.21.2"
 	}
 }

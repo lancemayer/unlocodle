@@ -9,6 +9,7 @@ import {
 	Show,
 } from "solid-js"
 import toast, { Toaster } from "solid-toast"
+import { z } from "zod"
 import Cell from "./components/Cell"
 import Keyboard from "./components/Keyboard"
 import { ThemeSwitcher } from "./components/ThemeSwitcher"
@@ -30,10 +31,12 @@ const App: Component = () => {
 		}
 	})
 
-	interface CellInfo {
-		value: string
-		color: "no_match" | "exists" | "match"
-	}
+	const schema = z.object({
+		value: z.string(),
+		color: z.enum(["no_match", "exists", "match"]),
+	})
+
+	type CellInfo = z.infer<typeof schema>
 
 	const solution = "USCLE"
 
@@ -47,9 +50,10 @@ const App: Component = () => {
 
 	const [rowShake, setRowShake] = createSignal(false)
 
-	const storedData: CellInfo[][] = JSON.parse(
-		localStorage.getItem("guesses") || "[]"
-	)
+	const storedData: CellInfo[][] = schema
+		.array()
+		.array()
+		.parse(JSON.parse(localStorage.getItem("guesses") || "[]"))
 
 	const [committedGuesses, setCommittedGuesses] =
 		createSignal<CellInfo[][]>(storedData)
@@ -80,6 +84,7 @@ const App: Component = () => {
 		if (e.key === "Backspace") {
 			deleteLetter()
 		} else if (e.key === "Enter") {
+			e.preventDefault()
 			enterGuess()
 		} else if (
 			/^[a-z0-9]$/.test(e.key.toLowerCase()) &&
@@ -89,9 +94,9 @@ const App: Component = () => {
 		}
 	}
 
-	let divRowRef: any
+	let divRowRef: HTMLDivElement | undefined = undefined
 
-	onMount(() => divRowRef.addEventListener("animationend", endShake))
+	onMount(() => divRowRef?.addEventListener("animationend", endShake))
 
 	function endShake() {
 		setRowShake(false)
