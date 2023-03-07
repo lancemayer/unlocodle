@@ -1,6 +1,6 @@
 import { For } from "solid-js"
 
-const Keyboard = ({
+export const Keyboard = ({
 	enterGuess,
 	deleteLetter,
 	inputLetter,
@@ -47,5 +47,3 @@ const Keyboard = ({
 		</div>
 	)
 }
-
-export default Keyboard

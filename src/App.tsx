@@ -10,8 +10,8 @@ import {
 } from "solid-js"
 import toast, { Toaster } from "solid-toast"
 import { z } from "zod"
-import Cell from "./components/Cell"
-import Keyboard from "./components/Keyboard"
+import { Cell } from "./components/Cell"
+import { Keyboard } from "./components/Keyboard"
 import { ThemeSwitcher } from "./components/ThemeSwitcher"
 
 export const [theme, setTheme] = createSignal(localStorage.theme)
@@ -66,7 +66,7 @@ const App: Component = () => {
 
 		if (mostRecentGuess === solution) {
 			setGameResult("win")
-			toast("You win!", { position: "top-center" })
+			setTimeout(() => toast("You win!", { position: "top-center" }), 1000)
 		} else if (committedGuesses().length === 6) {
 			setGameResult("loss")
 			toast("You lose!", { position: "top-center" })

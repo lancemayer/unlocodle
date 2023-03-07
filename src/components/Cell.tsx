@@ -1,6 +1,6 @@
 import { children, createEffect, createSignal, JSX } from "solid-js"
 
-const Cell = (props: {
+export const Cell = (props: {
 	color?: string
 	reveal?: boolean
 	index?: number
@@ -39,5 +39,3 @@ const Cell = (props: {
 		</div>
 	)
 }
-
-export default Cell
