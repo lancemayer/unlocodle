@@ -48,6 +48,7 @@ const App: Component = () => {
 	const totalGuesses = 6
 	const [guess, setGuess] = createSignal("")
 
+	const [guessAnimating, setGuessAnimating] = createSignal(false)
 	const [rowShake, setRowShake] = createSignal(false)
 
 	const storedData: CellInfo[][] = schema
@@ -78,7 +79,7 @@ const App: Component = () => {
 	})
 
 	const handleKeyPress = (e: KeyboardEvent) => {
-		if (e.repeat === true) {
+		if (e.repeat || guessAnimating()) {
 			return
 		}
 		if (e.key === "Backspace") {
@@ -94,26 +95,45 @@ const App: Component = () => {
 		}
 	}
 
-	let divRowRef: HTMLDivElement | undefined = undefined
+	onMount(() => {
+		document.addEventListener("keydown", handleKeyPress)
+		document.addEventListener("animationstart", startAnimation)
+		document.addEventListener("animationend", endAnimation)
 
-	onMount(() => divRowRef?.addEventListener("animationend", endShake))
+		onCleanup(() => {
+			document.removeEventListener("keydown", handleKeyPress)
+			document.removeEventListener("animationstart", startAnimation)
+			document.removeEventListener("animationend", endAnimation)
+		})
+	})
 
-	function endShake() {
-		setRowShake(false)
+	function startAnimation(e: AnimationEvent) {
+		if (e.animationName.startsWith("flip-")) {
+			setGuessAnimating(true)
+
+			const animations = document.getAnimations()
+			animations.forEach((a) => {
+				a.finished.then(() => {
+					if (animations.every((a) => a.playState === "finished")) {
+						setGuessAnimating(false)
+					}
+				})
+			})
+		}
 	}
 
-	createEffect(() => {
-		document.addEventListener("keydown", handleKeyPress)
-
-		onCleanup(() => document.removeEventListener("keydown", handleKeyPress))
-	})
+	function endAnimation(e: AnimationEvent) {
+		if (e.animationName === "shake-horizontal") {
+			setRowShake(false)
+		}
+	}
 
 	const deleteLetter = () => {
 		setGuess(guess().slice(0, guess().length - 1))
 	}
 
 	const enterGuess = () => {
-		if (gameResult() !== "unfinished") {
+		if (gameResult() !== "unfinished" || guessAnimating()) {
 			return
 		}
 
@@ -198,36 +218,34 @@ const App: Component = () => {
 							<For each={committedGuesses()}>
 								{(guess) => (
 									<div class="grid max-w-lg grid-cols-5 gap-x-1.5">
-										{Array.from(guess).map((cell, index) => (
-											<Cell color={cell.color} reveal index={index}>
-												{cell.value}
-											</Cell>
-										))}
+										<For each={Array.from(guess)}>
+											{(cell, index) => (
+												<Cell color={cell.color} reveal index={index()}>
+													{cell.value}
+												</Cell>
+											)}
+										</For>
 									</div>
 								)}
 							</For>
 
 							<Show when={committedGuesses().length < totalGuesses}>
 								<div
-									ref={divRowRef}
 									class={`grid max-w-lg grid-cols-5 gap-x-1.5 ${
 										rowShake() === true ? "animate-shake" : ""
 									}`}
 								>
-									<Cell>{guess()[0]}</Cell>
-									<Cell>{guess()[1]}</Cell>
-									<Cell>{guess()[2]}</Cell>
-									<Cell>{guess()[3]}</Cell>
-									<Cell>{guess()[4]}</Cell>
+									<For each={Array.from(guess())}>
+										{(guess) => <Cell>{guess}</Cell>}
+									</For>
+									<For each={Array(5 - guess().length)}>
+										{() => <Cell></Cell>}
+									</For>
 								</div>
 								<For each={Array(5 - committedGuesses().length)}>
 									{(row) => (
 										<div hidden class="grid max-w-lg grid-cols-5 gap-x-1.5">
-											<Cell></Cell>
-											<Cell></Cell>
-											<Cell></Cell>
-											<Cell></Cell>
-											<Cell></Cell>
+											<For each={Array(5)}>{() => <Cell></Cell>}</For>
 										</div>
 									)}
 								</For>
