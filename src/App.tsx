@@ -107,15 +107,22 @@ const App: Component = () => {
 		})
 	})
 
+	let revealAnimations: Animation[] | null = null
+
 	function startAnimation(e: AnimationEvent) {
 		if (e.animationName.startsWith("flip-")) {
-			setGuessAnimating(true)
+			if (revealAnimations === null) {
+				setGuessAnimating(true)
+				revealAnimations = document.getAnimations()
+			} else {
+				return
+			}
 
-			const animations = document.getAnimations()
-			animations.forEach((a) => {
+			revealAnimations?.forEach((a) => {
 				a.finished.then(() => {
-					if (animations.every((a) => a.playState === "finished")) {
+					if (revealAnimations?.every((a) => a.playState === "finished")) {
 						setGuessAnimating(false)
+						revealAnimations = null
 					}
 				})
 			})
@@ -232,7 +239,7 @@ const App: Component = () => {
 							<Show when={committedGuesses().length < totalGuesses}>
 								<div
 									class={`grid max-w-lg grid-cols-5 gap-x-1.5 ${
-										rowShake() === true ? "animate-shake" : ""
+										rowShake() ? "animate-shake" : ""
 									}`}
 								>
 									<For each={Array.from(guess())}>
@@ -243,7 +250,7 @@ const App: Component = () => {
 									</For>
 								</div>
 								<For each={Array(5 - committedGuesses().length)}>
-									{(row) => (
+									{() => (
 										<div hidden class="grid max-w-lg grid-cols-5 gap-x-1.5">
 											<For each={Array(5)}>{() => <Cell></Cell>}</For>
 										</div>
