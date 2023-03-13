@@ -110,7 +110,7 @@ const App: Component = () => {
 	let revealAnimations: Animation[] | null = null
 
 	function startAnimation(e: AnimationEvent) {
-		if (e.animationName.startsWith("flip-")) {
+		if (e.animationName.startsWith("reveal-")) {
 			if (revealAnimations === null) {
 				setGuessAnimating(true)
 				revealAnimations = document.getAnimations()
