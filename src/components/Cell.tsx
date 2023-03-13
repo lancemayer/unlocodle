@@ -1,13 +1,13 @@
 import { children, JSX } from "solid-js"
+import { CellStatus } from "../App"
 
 export const Cell = (props: {
-	status?: string
-	reveal?: boolean
+	status?: CellStatus
 	index?: number
 	children?: JSX.Element
 }) => {
 	const c = children(() => props.children)
-	const delay = props.reveal && props.index ? (props.index as number) * 175 : 0
+	const delay = props.index ? (props.index as number) * 175 : 0
 	const animationStatus =
 		c() === undefined ? "idle" : props.status == null ? "add" : "reveal"
 

@@ -16,6 +16,15 @@ import { ThemeSwitcher } from "./components/ThemeSwitcher"
 
 export const [theme, setTheme] = createSignal(localStorage.theme)
 
+const schema = z.object({
+	value: z.string(),
+	status: z.enum(["no_match", "exists", "match"]),
+})
+
+type CellInfo = z.infer<typeof schema>
+
+export type CellStatus = z.infer<typeof schema>["status"]
+
 const App: Component = () => {
 	createEffect(() => {
 		localStorage.theme = theme()
@@ -30,13 +39,6 @@ const App: Component = () => {
 			document.documentElement.classList.remove("dark")
 		}
 	})
-
-	const schema = z.object({
-		value: z.string(),
-		status: z.enum(["no_match", "exists", "match"]),
-	})
-
-	type CellInfo = z.infer<typeof schema>
 
 	const solution = "USCLE"
 
@@ -227,7 +229,7 @@ const App: Component = () => {
 									<div class="grid max-w-lg grid-cols-5 gap-x-1.5">
 										<For each={Array.from(guess)}>
 											{(cell, index) => (
-												<Cell status={cell.status} reveal index={index()}>
+												<Cell status={cell.status} index={index()}>
 													{cell.value}
 												</Cell>
 											)}
