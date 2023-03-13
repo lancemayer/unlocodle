@@ -33,7 +33,7 @@ const App: Component = () => {
 
 	const schema = z.object({
 		value: z.string(),
-		color: z.enum(["no_match", "exists", "match"]),
+		status: z.enum(["no_match", "exists", "match"]),
 	})
 
 	type CellInfo = z.infer<typeof schema>
@@ -155,13 +155,13 @@ const App: Component = () => {
 			let guessColored: CellInfo[] = Array.from(guess()).map((letter) => {
 				return {
 					value: letter,
-					color: "no_match",
+					status: "no_match",
 				}
 			})
 
 			for (let i = 0; i < 5; i++) {
 				if (guess()[i] === solution[i]) {
-					guessColored[i].color = "match"
+					guessColored[i].status = "match"
 					remainingLetters[i] = ""
 				}
 			}
@@ -170,7 +170,7 @@ const App: Component = () => {
 					remainingLetters[i] !== "" &&
 					remainingLetters.includes(guess()[i])
 				) {
-					guessColored[i].color = "exists"
+					guessColored[i].status = "exists"
 				}
 			}
 
@@ -227,7 +227,7 @@ const App: Component = () => {
 									<div class="grid max-w-lg grid-cols-5 gap-x-1.5">
 										<For each={Array.from(guess)}>
 											{(cell, index) => (
-												<Cell color={cell.color} reveal index={index()}>
+												<Cell status={cell.status} reveal index={index()}>
 													{cell.value}
 												</Cell>
 											)}
