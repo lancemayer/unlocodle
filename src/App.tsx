@@ -42,7 +42,6 @@ const App: Component = () => {
 
 	const solution = "USCLE"
 
-	// TODO: Create function to calculate game status based on last guess and number of guesses
 	const [gameResult, setGameResult] = createSignal<
 		"unfinished" | "win" | "loss"
 	>("unfinished")
