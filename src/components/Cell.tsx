@@ -11,8 +11,6 @@ export const Cell = (props: {
 	const animationStatus =
 		c() === undefined ? "idle" : props.status == undefined ? "add" : "reveal"
 
-	console.log("animationStatus", animationStatus, c())
-
 	return (
 		<div
 			class={`flex h-14 w-14 items-center justify-center rounded-md border-2
