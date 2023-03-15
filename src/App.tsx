@@ -8,11 +8,22 @@ import {
 	onMount,
 	Show,
 } from "solid-js"
-import Cell from "./components/Cell"
-import Keyboard from "./components/Keyboard"
+import toast, { Toaster } from "solid-toast"
+import { z } from "zod"
+import { Cell } from "./components/Cell"
+import { Keyboard } from "./components/Keyboard"
 import { ThemeSwitcher } from "./components/ThemeSwitcher"
 
 export const [theme, setTheme] = createSignal(localStorage.theme)
+
+const schema = z.object({
+	value: z.string(),
+	status: z.enum(["no_match", "exists", "match"]),
+})
+
+type CellInfo = z.infer<typeof schema>
+
+export type CellStatus = z.infer<typeof schema>["status"]
 
 const App: Component = () => {
 	createEffect(() => {
@@ -29,14 +40,8 @@ const App: Component = () => {
 		}
 	})
 
-	interface CellInfo {
-		value: string
-		color: "no_match" | "exists" | "match"
-	}
-
 	const solution = "USCLE"
 
-	// TODO: Create function to calculate game status based on last guess and number of guesses
 	const [gameResult, setGameResult] = createSignal<
 		"unfinished" | "win" | "loss"
 	>("unfinished")
@@ -44,11 +49,13 @@ const App: Component = () => {
 	const totalGuesses = 6
 	const [guess, setGuess] = createSignal("")
 
+	const [guessAnimating, setGuessAnimating] = createSignal(false)
 	const [rowShake, setRowShake] = createSignal(false)
 
-	const storedData: CellInfo[][] = JSON.parse(
-		localStorage.getItem("guesses") || "[]"
-	)
+	const storedData: CellInfo[][] = schema
+		.array()
+		.array()
+		.parse(JSON.parse(localStorage.getItem("guesses") || "[]"))
 
 	const [committedGuesses, setCommittedGuesses] =
 		createSignal<CellInfo[][]>(storedData)
@@ -61,10 +68,10 @@ const App: Component = () => {
 
 		if (mostRecentGuess === solution) {
 			setGameResult("win")
+			setTimeout(() => toast("You win!", { position: "top-center" }), 1000)
 		} else if (committedGuesses().length === 6) {
 			setGameResult("loss")
-		} else {
-			setGameResult("unfinished")
+			toast("You lose!", { position: "top-center" })
 		}
 	})
 
@@ -72,15 +79,14 @@ const App: Component = () => {
 		localStorage.setItem("guesses", JSON.stringify(committedGuesses()))
 	})
 
-	const [message, setMessage] = createSignal("")
-
 	const handleKeyPress = (e: KeyboardEvent) => {
-		if (e.repeat === true) {
+		if (e.repeat || guessAnimating()) {
 			return
 		}
 		if (e.key === "Backspace") {
 			deleteLetter()
 		} else if (e.key === "Enter") {
+			e.preventDefault()
 			enterGuess()
 		} else if (
 			/^[a-z0-9]$/.test(e.key.toLowerCase()) &&
@@ -90,44 +96,73 @@ const App: Component = () => {
 		}
 	}
 
-	let divRowRef: any
+	onMount(() => {
+		document.addEventListener("keydown", handleKeyPress)
+		document.addEventListener("animationstart", startAnimation)
+		document.addEventListener("animationend", endAnimation)
 
-	onMount(() => divRowRef.addEventListener("animationend", endShake))
+		onCleanup(() => {
+			document.removeEventListener("keydown", handleKeyPress)
+			document.removeEventListener("animationstart", startAnimation)
+			document.removeEventListener("animationend", endAnimation)
+		})
+	})
 
-	function endShake() {
-		setRowShake(false)
+	let revealAnimations: Animation[] | null = null
+
+	function startAnimation(e: AnimationEvent) {
+		if (e.animationName.startsWith("reveal-")) {
+			if (revealAnimations === null) {
+				setGuessAnimating(true)
+				revealAnimations = document.getAnimations()
+			} else {
+				return
+			}
+
+			revealAnimations?.forEach((a) => {
+				a.finished.then(() => {
+					if (revealAnimations?.every((a) => a.playState === "finished")) {
+						setGuessAnimating(false)
+						revealAnimations = null
+					}
+				})
+			})
+		}
 	}
 
-	createEffect(() => {
-		document.addEventListener("keydown", handleKeyPress)
-
-		onCleanup(() => document.removeEventListener("keydown", handleKeyPress))
-	})
+	function endAnimation(e: AnimationEvent) {
+		if (e.animationName === "shake-horizontal") {
+			setRowShake(false)
+		}
+	}
 
 	const deleteLetter = () => {
 		setGuess(guess().slice(0, guess().length - 1))
 	}
 
 	const enterGuess = () => {
-		if (guess().length < 5) {
-			setMessage("Guess must be 5 letters long")
+		if (gameResult() !== "unfinished" || guessAnimating()) {
 			return
 		}
-		if (guess().length === 5 && committedGuesses().length < 6) {
-			setMessage("")
 
+		if (guess().length < 5) {
+			toast("Guess must be 5 letters long", { position: "top-center" })
+			return
+		}
+
+		if (guess().length === 5 && committedGuesses().length < 6) {
 			let remainingLetters = Array.from(solution)
 
 			let guessColored: CellInfo[] = Array.from(guess()).map((letter) => {
 				return {
 					value: letter,
-					color: "no_match",
+					status: "no_match",
 				}
 			})
 
 			for (let i = 0; i < 5; i++) {
 				if (guess()[i] === solution[i]) {
-					guessColored[i].color = "match"
+					guessColored[i].status = "match"
 					remainingLetters[i] = ""
 				}
 			}
@@ -136,14 +171,13 @@ const App: Component = () => {
 					remainingLetters[i] !== "" &&
 					remainingLetters.includes(guess()[i])
 				) {
-					guessColored[i].color = "exists"
+					guessColored[i].status = "exists"
 				}
 			}
 
 			if (guess() === "XXXXX") {
 				setRowShake(true)
-				setMessage("Invalid guess")
-				setTimeout(() => setMessage(""), 3000)
+				toast("Invalid guess", { position: "top-center" })
 				return
 			}
 
@@ -163,75 +197,71 @@ const App: Component = () => {
 	}
 
 	return (
-		<div>
-			<div>
-				<div class="flex h-16 items-center border-b-2 border-gray-300 dark:border-gray-600">
-					<h1 class="text grow text-center font-serif text-3xl font-extrabold tracking-wide text-black dark:text-white">
-						UNLOCODLE
-					</h1>
-					<div class="absolute right-4">
-						<div class="flex space-x-2 align-middle">
-							<ThemeSwitcher />
-							<Show when={import.meta.env.DEV && true}>
-								<button
-									class="text-black dark:text-white"
-									onClick={() => {
-										localStorage.setItem("guesses", "[]")
-										location.reload()
-									}}
-								>
-									Reset
-								</button>
-							</Show>
-						</div>
+		<>
+			<div class="flex h-16 items-center border-b-2 border-gray-300 dark:border-gray-600">
+				<h1 class="text grow text-center font-serif text-3xl font-extrabold tracking-wide text-black dark:text-white">
+					UNLOCODLE
+				</h1>
+				<div class="absolute right-4">
+					<div class="flex space-x-2 align-middle">
+						<ThemeSwitcher />
+						<Show when={import.meta.env.DEV && true}>
+							<button
+								class="text-black dark:text-white"
+								onClick={() => {
+									localStorage.setItem("guesses", "[]")
+									location.reload()
+								}}
+							>
+								Reset
+							</button>
+						</Show>
 					</div>
 				</div>
-				<div class="mx-auto w-full max-w-[500px]">
+			</div>
+			<div class="mx-auto flex w-full max-w-[500px] flex-col">
+				<div class="flex flex-col">
 					<div class="flex grow justify-center overflow-hidden align-middle">
 						<div class="grid grid-rows-6 gap-y-1.5 p-2.5">
 							<For each={committedGuesses()}>
 								{(guess) => (
 									<div class="grid max-w-lg grid-cols-5 gap-x-1.5">
-										{Array.from(guess).map((cell, index) => (
-											<Cell color={cell.color} reveal index={index}>
-												{cell.value}
-											</Cell>
-										))}
+										<For each={Array.from(guess)}>
+											{(cell, index) => (
+												<Cell status={cell.status} index={index()}>
+													{cell.value}
+												</Cell>
+											)}
+										</For>
 									</div>
 								)}
 							</For>
 
 							<Show when={committedGuesses().length < totalGuesses}>
 								<div
-									ref={divRowRef}
 									class={`grid max-w-lg grid-cols-5 gap-x-1.5 ${
-										rowShake() === true ? "animate-shake" : ""
+										rowShake() ? "animate-shake" : ""
 									}`}
 								>
-									<Cell>{guess()[0]}</Cell>
-									<Cell>{guess()[1]}</Cell>
-									<Cell>{guess()[2]}</Cell>
-									<Cell>{guess()[3]}</Cell>
-									<Cell>{guess()[4]}</Cell>
+									<For each={Array.from(guess())}>
+										{(guess) => <Cell>{guess}</Cell>}
+									</For>
+									<For each={Array(5 - guess().length)}>
+										{() => <Cell></Cell>}
+									</For>
 								</div>
 								<For each={Array(5 - committedGuesses().length)}>
-									{(row) => (
+									{() => (
 										<div hidden class="grid max-w-lg grid-cols-5 gap-x-1.5">
-											<Cell></Cell>
-											<Cell></Cell>
-											<Cell></Cell>
-											<Cell></Cell>
-											<Cell></Cell>
+											<For each={Array(5)}>{() => <Cell></Cell>}</For>
 										</div>
 									)}
 								</For>
-								<div class="text-black dark:text-white">{message()}</div>
 							</Show>
 						</div>
 					</div>
-					<Show when={gameResult() !== "unfinished"}>
-						<div>{gameResult()}</div>
-					</Show>
+				</div>
+				<div class="max-sm:absolute max-sm:inset-x-0 max-sm:bottom-2">
 					<Keyboard
 						enterGuess={enterGuess}
 						deleteLetter={deleteLetter}
@@ -239,7 +269,8 @@ const App: Component = () => {
 					/>
 				</div>
 			</div>
-		</div>
+			<Toaster containerClassName="mt-16" />
+		</>
 	)
 }
 

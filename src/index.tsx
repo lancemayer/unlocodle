@@ -1,4 +1,4 @@
-/* @refresh reload */
+import "@total-typescript/ts-reset"
 import { render } from "solid-js/web"
 import App from "./App"
 import "./index.css"

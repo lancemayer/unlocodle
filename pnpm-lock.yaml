@@ -2,20 +2,26 @@ lockfileVersion: 5.4
 
 specifiers:
   '@playwright/test': ^1.30.0
+  '@total-typescript/ts-reset': ^0.3.7
   autoprefixer: ^10.4.13
   postcss: ^8.4.21
   prettier: ^2.8.4
   prettier-plugin-tailwindcss: ^0.2.3
   solid-js: ^1.6.11
+  solid-toast: ^0.4.0
   tailwindcss: ^3.2.7
   tailwindcss-animation-delay: ^1.0.7
   typescript: ^4.9.5
   vite: ^4.1.4
   vite-plugin-solid: ^2.5.0
+  zod: ^3.21.2
 
 dependencies:
+  '@total-typescript/ts-reset': 0.3.7
   solid-js: 1.6.11
+  solid-toast: 0.4.0_solid-js@1.6.11
   tailwindcss-animation-delay: 1.0.7_tailwindcss@3.2.7
+  zod: 3.21.2
 
 devDependencies:
   '@playwright/test': 1.30.0
@@ -608,6 +614,10 @@ packages:
       '@types/node': 18.13.0
       playwright-core: 1.30.0
     dev: true
+
+  /@total-typescript/ts-reset/0.3.7:
+    resolution: {integrity: sha512-yXt2BRRVCJVvzWaxac5n0nCXzIrQEBE/MeYlNQ8/Iq7UeelNmm/AdnUAu18ilSS893mbEQ4u6whPt/HvOPc4rw==}
+    dev: false
 
   /@types/node/18.13.0:
     resolution: {integrity: sha512-gC3TazRzGoOnoKAhUx+Q0t8S9Tzs74z7m0ipwGpSqQrleP14hKxP4/JUeEQcD3W1/aIpnWl8pHowI7WokuZpXg==}
@@ -1218,6 +1228,14 @@ packages:
       solid-js: 1.6.11
     dev: true
 
+  /solid-toast/0.4.0_solid-js@1.6.11:
+    resolution: {integrity: sha512-ciJbj+n+7KbUN6wfwZsW7lqFESLoQ9sXMG4uJWuHrIw2f0GxX3/wLSKs0Q1YwdTZZRxyRJ1Nwc2eBVcJvs91+g==}
+    peerDependencies:
+      solid-js: ^1.5.4
+    dependencies:
+      solid-js: 1.6.11
+    dev: false
+
   /source-map-js/1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
     engines: {node: '>=0.10.0'}
@@ -1382,3 +1400,7 @@ packages:
   /yaml/1.10.2:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
     engines: {node: '>= 6'}
+
+  /zod/3.21.2:
+    resolution: {integrity: sha512-0Ygy2/IZNIxHterZdHjE5Vb8hp1fUHJD/BGvSHj8QJx+UipEVNvo9WLchoyBpz5JIaN6KmdGDGYdloGzpFK98g==}
+    dev: false

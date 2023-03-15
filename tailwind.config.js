@@ -2,7 +2,7 @@ const { rule } = require("postcss")
 
 module.exports = {
 	content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-	darkMode: 'class',
+	darkMode: "class",
 	theme: {
 		extend: {
 			keyframes: {
@@ -11,7 +11,7 @@ module.exports = {
 					"50%": { transform: "scale(110%)" },
 					"100%": { transform: "scale(100%)" },
 				},
-				"flip-match": {
+				"reveal-match": {
 					"0%": {
 						transform: "rotateX(0deg)",
 						backgroundColor: "transparent",
@@ -32,7 +32,7 @@ module.exports = {
 						color: "white",
 					},
 				},
-				"flip-exists": {
+				"reveal-exists": {
 					"0%": {
 						transform: "rotateX(0deg)",
 						backgroundColor: "transparent",
@@ -53,7 +53,7 @@ module.exports = {
 						color: "white",
 					},
 				},
-				"flip-none": {
+				"reveal-none": {
 					"50%": {
 						transform: "rotateX(90deg)",
 						backgroundColor: "gray",
@@ -87,9 +87,9 @@ module.exports = {
 			},
 			animation: {
 				add: "pop .2s ease-in-out",
-				"reveal-match": "flip-match .8s ease-in-out forwards",
-				"reveal-exists": "flip-exists .8s ease-in-out forwards",
-				"reveal-none": "flip-none .8s ease-in-out forwards",
+				"reveal-match": "reveal-match .8s ease-in-out forwards",
+				"reveal-exists": "reveal-exists .8s ease-in-out forwards",
+				"reveal-none": "reveal-none .8s ease-in-out forwards",
 				shake: "shake-horizontal .25s ease-in-out",
 			},
 		},
