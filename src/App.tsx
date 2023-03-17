@@ -16,14 +16,14 @@ import { ThemeSwitcher } from "./components/ThemeSwitcher"
 
 export const [theme, setTheme] = createSignal(localStorage.theme)
 
-const schema = z.object({
+const guessesSchema = z.object({
 	value: z.string(),
 	status: z.enum(["no_match", "exists", "match"]),
 })
 
-type CellInfo = z.infer<typeof schema>
+type CellInfo = z.infer<typeof guessesSchema>
 
-export type CellStatus = z.infer<typeof schema>["status"]
+export type CellStatus = z.infer<typeof guessesSchema>["status"]
 
 const App: Component = () => {
 	createEffect(() => {
@@ -54,7 +54,7 @@ const App: Component = () => {
 
 	let storedData: CellInfo[][]
 
-	const result = schema
+	const result = guessesSchema
 		.array()
 		.array()
 		.safeParse(JSON.parse(localStorage.getItem("guesses") || "[]"))
