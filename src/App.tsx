@@ -52,10 +52,18 @@ const App: Component = () => {
 	const [guessAnimating, setGuessAnimating] = createSignal(false)
 	const [rowShake, setRowShake] = createSignal(false)
 
-	const storedData: CellInfo[][] = schema
+	let storedData: CellInfo[][]
+
+	const result = schema
 		.array()
 		.array()
-		.parse(JSON.parse(localStorage.getItem("guesses") || "[]"))
+		.safeParse(JSON.parse(localStorage.getItem("guesses") || "[]"))
+
+	if (!result.success) {
+		storedData = []
+	} else {
+		storedData = result.data
+	}
 
 	const [committedGuesses, setCommittedGuesses] =
 		createSignal<CellInfo[][]>(storedData)
