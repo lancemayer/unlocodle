@@ -25,6 +25,10 @@ type CellInfo = z.infer<typeof guessesSchema>
 
 export type CellStatus = z.infer<typeof guessesSchema>["status"]
 
+export const [guessedLetterResults, setGuessedLetterResults] = createSignal<
+	Map<string, "no_match" | "exists" | "match">
+>(new Map())
+
 const App: Component = () => {
 	createEffect(() => {
 		localStorage.theme = theme()
@@ -67,6 +71,18 @@ const App: Component = () => {
 
 	const [committedGuesses, setCommittedGuesses] =
 		createSignal<CellInfo[][]>(storedData)
+
+	createEffect(() => {
+		setGuessedLetterResults(
+			committedGuesses()
+				.flat()
+				.sort((a, b) => (a.status === "exists" ? -1 : 1))
+				.reduce((accumulator, currentValue) => {
+					accumulator.set(currentValue.value, currentValue.status)
+					return accumulator
+				}, new Map())
+		)
+	})
 
 	createComputed(() => {
 		const mostRecentGuess = committedGuesses()
