@@ -13,6 +13,7 @@ import { z } from "zod"
 import { Cell } from "./components/Cell"
 import { Keyboard } from "./components/Keyboard"
 import { ThemeSwitcher } from "./components/ThemeSwitcher"
+import { unlocodes } from "./unlocodes"
 
 export const [theme, setTheme] = createSignal(localStorage.theme)
 
@@ -30,6 +31,12 @@ export const [guessedLetterResults, setGuessedLetterResults] = createSignal<
 >(new Map())
 
 const App: Component = () => {
+	if (!localStorage.solution) {
+		localStorage.solution =
+			unlocodes[Math.floor(Math.random() * unlocodes.length)]
+	}
+	const solution = localStorage.solution
+
 	createEffect(() => {
 		localStorage.theme = theme()
 
@@ -43,8 +50,6 @@ const App: Component = () => {
 			document.documentElement.classList.remove("dark")
 		}
 	})
-
-	const solution = "USCLE"
 
 	const [gameResult, setGameResult] = createSignal<
 		"unfinished" | "win" | "loss"
@@ -234,6 +239,7 @@ const App: Component = () => {
 								class="text-black dark:text-white"
 								onClick={() => {
 									localStorage.setItem("guesses", "[]")
+									localStorage.removeItem("solution")
 									location.reload()
 								}}
 							>
