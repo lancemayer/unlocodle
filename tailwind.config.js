@@ -43,13 +43,13 @@ module.exports = {
 					},
 					"51%": {
 						transform: "rotateX(90deg)",
-						backgroundColor: "#ffe135",
+						backgroundColor: "#b59f3b",
 						color: "white",
 					},
 					"100%": {
 						transform: "rotateX(0deg)",
-						backgroundColor: "#ffe135",
-						borderColor: "#ffe135",
+						backgroundColor: "#b59f3b",
+						borderColor: "#b59f3b",
 						color: "white",
 					},
 				},
@@ -94,5 +94,4 @@ module.exports = {
 			},
 		},
 	},
-	plugins: [require("tailwindcss-animation-delay")],
 }

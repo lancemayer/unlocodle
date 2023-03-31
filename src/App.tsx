@@ -13,19 +13,30 @@ import { z } from "zod"
 import { Cell } from "./components/Cell"
 import { Keyboard } from "./components/Keyboard"
 import { ThemeSwitcher } from "./components/ThemeSwitcher"
+import { unlocodes } from "./unlocodes"
 
 export const [theme, setTheme] = createSignal(localStorage.theme)
 
-const schema = z.object({
+const guessesSchema = z.object({
 	value: z.string(),
 	status: z.enum(["no_match", "exists", "match"]),
 })
 
-type CellInfo = z.infer<typeof schema>
+type CellInfo = z.infer<typeof guessesSchema>
 
-export type CellStatus = z.infer<typeof schema>["status"]
+export type CellStatus = z.infer<typeof guessesSchema>["status"]
+
+export const [guessedLetterResults, setGuessedLetterResults] = createSignal<
+	Map<string, "no_match" | "exists" | "match">
+>(new Map())
 
 const App: Component = () => {
+	if (!localStorage.solution) {
+		localStorage.solution =
+			unlocodes[Math.floor(Math.random() * unlocodes.length)]
+	}
+	const solution = localStorage.solution
+
 	createEffect(() => {
 		localStorage.theme = theme()
 
@@ -40,8 +51,6 @@ const App: Component = () => {
 		}
 	})
 
-	const solution = "USCLE"
-
 	const [gameResult, setGameResult] = createSignal<
 		"unfinished" | "win" | "loss"
 	>("unfinished")
@@ -52,13 +61,33 @@ const App: Component = () => {
 	const [guessAnimating, setGuessAnimating] = createSignal(false)
 	const [rowShake, setRowShake] = createSignal(false)
 
-	const storedData: CellInfo[][] = schema
+	let storedData: CellInfo[][]
+
+	const result = guessesSchema
 		.array()
 		.array()
-		.parse(JSON.parse(localStorage.getItem("guesses") || "[]"))
+		.safeParse(JSON.parse(localStorage.getItem("guesses") || "[]"))
+
+	if (!result.success) {
+		storedData = []
+	} else {
+		storedData = result.data
+	}
 
 	const [committedGuesses, setCommittedGuesses] =
 		createSignal<CellInfo[][]>(storedData)
+
+	createEffect(() => {
+		setGuessedLetterResults(
+			committedGuesses()
+				.flat()
+				.sort((a, b) => (a.status === "exists" ? -1 : 1))
+				.reduce((accumulator, currentValue) => {
+					accumulator.set(currentValue.value, currentValue.status)
+					return accumulator
+				}, new Map())
+		)
+	})
 
 	createComputed(() => {
 		const mostRecentGuess = committedGuesses()
@@ -68,10 +97,50 @@ const App: Component = () => {
 
 		if (mostRecentGuess === solution) {
 			setGameResult("win")
-			setTimeout(() => toast("You win!", { position: "top-center" }), 1000)
+			setTimeout(
+				() =>
+					toast(
+						(t) => (
+							<div class="flex flex-col items-center">
+								<div class="text-2xl font-bold">You win!</div>
+								<div class="text-xl">The solution was {solution}</div>
+								<button
+									class="mt-4 rounded-md bg-gray-200 px-4 py-2"
+									onClick={() => {
+										localStorage.removeItem("solution")
+										localStorage.removeItem("guesses")
+										window.location.reload()
+									}}
+								>
+									Play again
+								</button>
+							</div>
+						),
+						{ duration: Infinity, position: "top-center" }
+					),
+				1000
+			)
 		} else if (committedGuesses().length === 6) {
 			setGameResult("loss")
-			toast("You lose!", { position: "top-center" })
+			toast(
+				(t) => (
+					<div class="flex flex-col items-center">
+						<div class="text-2xl font-bold">You lose</div>
+						<div class="text-xl">The solution was {solution}</div>
+						<button
+							class="mt-4 rounded-md bg-gray-200 px-4 py-2"
+							onClick={() => {
+								localStorage.removeItem("solution")
+								localStorage.removeItem("guesses")
+								window.location.reload()
+							}}
+						>
+							Play again
+						</button>
+					</div>
+				),
+				{ duration: Infinity, position: "top-center" }
+			)
 		}
 	})
 
@@ -175,9 +244,10 @@ const App: Component = () => {
 				}
 			}
 
-			if (guess() === "XXXXX") {
+			if (!unlocodes.includes(guess())) {
 				setRowShake(true)
-				toast("Invalid guess", { position: "top-center" })
+				toast("Invalid unlocode option", { position: "top-center" })
+
 				return
 			}
 
@@ -210,6 +280,7 @@ const App: Component = () => {
 								class="text-black dark:text-white"
 								onClick={() => {
 									localStorage.setItem("guesses", "[]")
+									localStorage.removeItem("solution")
 									location.reload()
 								}}
 							>
