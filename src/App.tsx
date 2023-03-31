@@ -244,9 +244,10 @@ const App: Component = () => {
 				}
 			}
 
-			if (guess() === "XXXXX") {
+			if (!unlocodes.includes(guess())) {
 				setRowShake(true)
-				toast("Invalid guess", { position: "top-center" })
+				toast("Invalid unlocode option", { position: "top-center" })
+
 				return
 			}
 
