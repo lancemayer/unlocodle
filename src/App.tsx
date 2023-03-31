@@ -97,10 +97,50 @@ const App: Component = () => {
 
 		if (mostRecentGuess === solution) {
 			setGameResult("win")
-			setTimeout(() => toast("You win!", { position: "top-center" }), 1000)
+			setTimeout(
+				() =>
+					toast(
+						(t) => (
+							<div class="flex flex-col items-center">
+								<div class="text-2xl font-bold">You win!</div>
+								<div class="text-xl">The solution was {solution}</div>
+								<button
+									class="mt-4 rounded-md bg-gray-200 px-4 py-2"
+									onClick={() => {
+										localStorage.removeItem("solution")
+										localStorage.removeItem("guesses")
+										window.location.reload()
+									}}
+								>
+									Play again
+								</button>
+							</div>
+						),
+						{ duration: Infinity, position: "top-center" }
+					),
+				1000
+			)
 		} else if (committedGuesses().length === 6) {
 			setGameResult("loss")
-			toast("You lose!", { position: "top-center" })
+			toast(
+				(t) => (
+					<div class="flex flex-col items-center">
+						<div class="text-2xl font-bold">You lose</div>
+						<div class="text-xl">The solution was {solution}</div>
+						<button
+							class="mt-4 rounded-md bg-gray-200 px-4 py-2"
+							onClick={() => {
+								localStorage.removeItem("solution")
+								localStorage.removeItem("guesses")
+								window.location.reload()
+							}}
+						>
+							Play again
+						</button>
+					</div>
+				),
+				{ duration: Infinity, position: "top-center" }
+			)
 		}
 	})
 
