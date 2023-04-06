@@ -1,5 +1,6 @@
 import { createEffect, createSignal, For } from "solid-js"
-import { guessedLetterResults, theme } from "../App"
+import { theme } from "../App"
+import { guessedLetterResults } from "./Game"
 
 export const Keyboard = (props: {
 	enterGuess: () => void
