@@ -265,6 +265,7 @@ const Game: Component = () => {
 								onClick={() => {
 									localStorage.setItem("guesses", "[]")
 									localStorage.removeItem("solution")
+									localStorage.removeItem("showInstructions")
 									location.reload()
 								}}
 							>
