@@ -24,6 +24,8 @@
 	},
 	"dependencies": {
 		"@total-typescript/ts-reset": "^0.3.7",
+		"@zag-js/dialog": "^0.7.0",
+		"@zag-js/solid": "^0.7.0",
 		"solid-js": "^1.6.11",
 		"solid-toast": "^0.4.0",
 		"zod": "^3.21.2"

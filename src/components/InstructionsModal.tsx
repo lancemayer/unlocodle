@@ -1,24 +1,63 @@
-import { Component, Show, createSignal } from "solid-js"
+import * as dialog from "@zag-js/dialog"
+import { normalizeProps, useMachine } from "@zag-js/solid"
+import {
+	Component,
+	Show,
+	createMemo,
+	createSignal,
+	createUniqueId,
+} from "solid-js"
 import { Portal } from "solid-js/web"
 
 export const InstructionsModal: Component = () => {
 	const showInstructionslocalStorage =
 		localStorage.getItem("showInstructions") ?? "true"
 
+	const [dontShowAgain, setDontShowAgain] = createSignal<boolean>(false)
+
+	const [state, send] = useMachine(
+		dialog.machine({
+			id: createUniqueId(),
+			open: showInstructionslocalStorage === "true",
+			trapFocus: false,
+			onClose: () => {
+				if (dontShowAgain()) {
+					localStorage.setItem("showInstructions", "false")
+				}
+			},
+		})
+	)
+
+	const api = createMemo(() => dialog.connect(state, send, normalizeProps))
+
+	console.log(api())
+
 	const [showModal, setShowModal] = createSignal<boolean>(
 		showInstructionslocalStorage === "true"
 	)
-	const [dontShowAgain, setDontShowAgain] = createSignal<boolean>(false)
 
 	return (
-		<Show when={showModal()}>
+		<Show when={api().isOpen}>
 			<Portal>
-				<div class="fixed left-0 top-0 h-screen w-full">
-					<div class="grid h-full place-items-center bg-black/50">
-						<div class="bg-gray-950 h-[600px] w-[350px] overflow-auto rounded-lg p-8 drop-shadow-xl sm:h-[640px] sm:w-[520px]">
-							<h1 class="m-3 text-center text-2xl font-bold text-white">
-								What is UNLOCODLE?
-							</h1>
+				<div
+					{...api().backdropProps}
+					class="fixed left-0 top-0 h-screen w-full bg-black/50"
+				/>
+				<div
+					{...api().containerProps}
+					class="fixed inset-0 flex h-screen w-full items-center justify-center"
+				>
+					<div
+						{...api().contentProps}
+						class="h-[600px] max-h-screen w-[350px] overflow-auto rounded-lg bg-gray-950 p-8 drop-shadow-xl sm:h-[640px] sm:w-[520px]"
+					>
+						<h1
+							{...api().titleProps}
+							class="text-center text-2xl font-bold text-white"
+						>
+							What is UNLOCODLE?
+						</h1>
+						<div {...api().descriptionProps}>
 							<div class="text-white">
 								It is a hot new Wordle parody that no one asked for and is
 								causing people to say things like "I can't believe this is...a
@@ -82,13 +121,14 @@ export const InstructionsModal: Component = () => {
 										/>
 									</div>
 									<button
+										{...api().closeTriggerProps}
 										class="mt-3 h-8  w-16 rounded-full bg-white hover:bg-gray-200"
-										onClick={() => {
-											if (dontShowAgain()) {
-												localStorage.setItem("showInstructions", "false")
-											}
-											setShowModal(false)
-										}}
+										// onClick={() => {
+										// 	if (dontShowAgain()) {
+										// 		localStorage.setItem("showInstructions", "false")
+										// 	}
+										// 	setShowModal(false)
+										// }}
 									>
 										<div>Close</div>
 									</button>
