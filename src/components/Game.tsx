@@ -10,6 +10,7 @@ import {
 } from "solid-js"
 import toast, { Toaster } from "solid-toast"
 import { z } from "zod"
+import { growthbook } from "../App"
 import { unlocodes } from "../unlocodes"
 import { Cell } from "./Cell"
 import { Keyboard } from "./Keyboard"
@@ -258,7 +259,9 @@ const Game: Component = () => {
 				</h1>
 				<div class="absolute right-4">
 					<div class="flex space-x-2 align-middle">
-						<ThemeSwitcher />
+						<Show when={growthbook.isOn("theme-toggle")}>
+							<ThemeSwitcher />
+						</Show>
 						<Show when={import.meta.env.DEV && true}>
 							<button
 								class="text-black dark:text-white"

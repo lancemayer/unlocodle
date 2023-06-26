@@ -30,8 +30,6 @@ export const InstructionsModal: Component = () => {
 
 	const api = createMemo(() => dialog.connect(state, send, normalizeProps))
 
-	console.log(api())
-
 	const [showModal, setShowModal] = createSignal<boolean>(
 		showInstructionslocalStorage === "true"
 	)
