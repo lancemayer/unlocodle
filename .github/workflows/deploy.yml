@@ -5,8 +5,8 @@ on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches:
-      - 'dev'
-      - 'main'
+      - "dev"
+      - "main"
     tags:
       - "v*"
     # branches: [dev, main]
@@ -46,7 +46,7 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
 
       - name: Deploy Prod
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/tags/v*' }}
         run: |
           npm install -g netlify-cli
           netlify deploy --auth "$NETLIFY_AUTH_TOKEN" --site "$NETLIFY_SITE_ID" --dir dist/ --prod
