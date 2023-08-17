@@ -30,8 +30,6 @@ export const InstructionsModal: Component = () => {
 
 	const api = createMemo(() => dialog.connect(state, send, normalizeProps))
 
-	console.log(api())
-
 	const [showModal, setShowModal] = createSignal<boolean>(
 		showInstructionslocalStorage === "true"
 	)
@@ -41,7 +39,7 @@ export const InstructionsModal: Component = () => {
 			<Portal>
 				<div
 					{...api().backdropProps}
-					class="fixed left-0 top-0 h-screen w-full bg-black/50"
+					class="fixed left-0 top-0 h-screen w-full bg-black/30 dark:bg-black/50"
 				/>
 				<div
 					{...api().containerProps}
@@ -49,32 +47,32 @@ export const InstructionsModal: Component = () => {
 				>
 					<div
 						{...api().contentProps}
-						class="h-[600px] max-h-screen w-[350px] overflow-auto rounded-lg bg-gray-950 p-8 drop-shadow-xl sm:h-[640px] sm:w-[520px]"
+						class="h-[600px] max-h-screen w-[350px] overflow-auto rounded-lg bg-white p-8 drop-shadow-xl dark:bg-gray-950 sm:h-[640px] sm:w-[520px]"
 					>
 						<h1
 							{...api().titleProps}
-							class="text-center text-2xl font-bold text-white"
+							class="text-center text-2xl font-bold text-black dark:text-white"
 						>
 							What is UNLOCODLE?
 						</h1>
 						<div {...api().descriptionProps}>
-							<div class="text-white">
+							<div class="text-black dark:text-white">
 								It is a hot new Wordle parody that no one asked for and is
 								causing people to say things like "I can't believe this is...a
 								thing" and "I'm not sure if I should be impressed or horrified"
 								and "Why...just...why?".
 							</div>
-							<div class="mt-4 text-white">
+							<div class="mt-4 text-black dark:text-white">
 								The most common way to play is to not. However, if you insist,
 								here are the rules:
 							</div>
-							<div class="text-white">
+							<div class="text-black dark:text-white">
 								The goal is to find the correct UNLOCODE in six guesses. Each
 								guess must be a valid US-based UNLOCODE. After submitting a
 								guess you will be given feedback on how many of your letters are
 								in the correct position and how many are in the wrong position.
 							</div>
-							<div class="mt-4 text-white">
+							<div class="mt-4 text-black dark:text-white">
 								Letters in the correct position show with a green background.
 								Letters that are in the wrong position show with a yellow
 								background. Letters that are not in the solution show with a
@@ -110,7 +108,10 @@ export const InstructionsModal: Component = () => {
 							<div class="flex flex-row-reverse">
 								<div class="flex items-center">
 									<div class="mr-4 flex items-center">
-										<label for="dismiss-instructions" class="mr-2 text-white">
+										<label
+											for="dismiss-instructions"
+											class="mr-2 text-black dark:text-white"
+										>
 											Don't show again
 										</label>
 										<input
@@ -122,13 +123,7 @@ export const InstructionsModal: Component = () => {
 									</div>
 									<button
 										{...api().closeTriggerProps}
-										class="mt-3 h-8  w-16 rounded-full bg-white hover:bg-gray-200"
-										// onClick={() => {
-										// 	if (dontShowAgain()) {
-										// 		localStorage.setItem("showInstructions", "false")
-										// 	}
-										// 	setShowModal(false)
-										// }}
+										class="mt-3 h-8  w-16 rounded-full bg-black text-white hover:bg-gray-200 dark:bg-white dark:text-black"
 									>
 										<div>Close</div>
 									</button>

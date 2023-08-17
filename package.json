@@ -23,6 +23,7 @@
 		"vite-plugin-solid": "^2.5.0"
 	},
 	"dependencies": {
+		"@growthbook/growthbook": "^0.27.0",
 		"@total-typescript/ts-reset": "^0.3.7",
 		"@zag-js/dialog": "^0.7.0",
 		"@zag-js/solid": "^0.7.0",
