@@ -1,6 +1,6 @@
 ## Usage
 
-This is a fake game
+This is a fake game that is fun...
 
 Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
 
