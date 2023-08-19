@@ -40,7 +40,7 @@ jobs:
       - name: Deploy Staging
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
-          echo path: ${{github.paths}}
+          echo path: ${{github.ref}}
           npm install -g netlify-cli
           netlify deploy --auth "$NETLIFY_AUTH_TOKEN" --site "$NETLIFY_SITE_ID" --dir dist/ --prod
         env:
